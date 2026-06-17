@@ -3,2358 +3,726 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>暗峰娱乐 · 包间管理系统</title>
+<title>暗峰娱乐 · 包间管理</title>
 <style>
-/* ========== 基础重置 ========== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg-primary: #0d0d0d;
-  --bg-secondary: #141414;
-  --bg-card: #1a1a1a;
-  --bg-hover: #242424;
-  --bg-active: #2a2a2a;
-  --text-primary: #f0f0f0;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666;
-  --accent: #f5c518;
-  --accent-hover: #ffd84d;
-  --accent-dim: #c49a00;
-  --accent-bg: rgba(245, 197, 24, 0.1);
-  --success: #3fb950;
-  --success-bg: rgba(63,185,80,0.12);
-  --warning: #d29922;
-  --warning-bg: rgba(210,153,34,0.12);
-  --danger: #f85149;
-  --danger-bg: rgba(248,81,73,0.12);
-  --border: #2a2a2a;
-  --border-light: #1e1e1e;
-  --radius: 8px;
-  --radius-sm: 6px;
-  --radius-lg: 12px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.35);
-  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-}
-
-html { font-size: 15px; }
-body {
-  font-family: var(--font);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.5;
-  overflow: hidden;
-  height: 100vh;
-}
-
-/* ========== 布局 ========== */
-#app {
-  display: flex;
-  height: 100vh;
-}
-
-.sidebar {
-  width: 220px;
-  min-width: 220px;
-  background: var(--bg-secondary);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
-}
-
-.sidebar-header {
-  padding: 20px 18px 16px;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.logo {
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  margin-bottom: 2px;
-  color: var(--accent);
-}
-
-.subtitle {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-/* ========== 导航 ========== */
-.nav {
-  flex: 1;
-  padding: 10px 8px;
-  overflow-y: auto;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-size: 0.92rem;
-  margin-bottom: 2px;
-}
-
-.nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
-.nav-item.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-
-.nav-icon { font-size: 1.1rem; width: 22px; text-align: center; }
-
-.sidebar-footer {
-  padding: 12px;
-  border-top: 1px solid var(--border-light);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.data-actions {
-  display: flex;
-  gap: 4px;
-}
-
-.data-actions .btn { flex: 1; font-size: 0.72rem; white-space: nowrap; }
-
-/* ========== 主内容区 ========== */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 24px;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
-  min-height: 58px;
-}
-
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 1.3rem;
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.menu-toggle:hover { color: var(--text-primary); background: var(--bg-hover); }
-
-.page-title { font-size: 1.15rem; font-weight: 600; flex: 1; }
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.current-time {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.content {
-  flex: 1;
-  padding: 20px 24px;
-  overflow-y: auto;
-}
-
-/* ========== 通用按钮 ========== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 0.88rem;
-  font-family: inherit;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.15s;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: #0d0d0d;
-  border-color: var(--accent);
-  font-weight: 600;
-}
-.btn-primary:hover { background: var(--accent-hover); }
-
-.btn-success {
-  background: #1a7f37;
-  color: #fff;
-  border-color: #1a7f37;
-}
-.btn-success:hover { background: #209143; }
-
-.btn-danger {
-  background: #bd2c2c;
-  color: #fff;
-  border-color: #bd2c2c;
-}
-.btn-danger:hover { background: #d03535; }
-
-.btn-outline {
-  background: transparent;
-  color: var(--text-secondary);
-  border-color: var(--border);
-}
-.btn-outline:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--text-muted); }
-
-.btn-warning {
-  background: var(--accent);
-  color: #0d0d0d;
-  border-color: var(--accent);
-  font-weight: 600;
-}
-.btn-warning:hover { background: var(--accent-hover); }
-
-.btn-sm { padding: 5px 10px; font-size: 0.8rem; }
-.btn-lg { padding: 10px 22px; font-size: 1rem; }
-
-.btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
-/* ========== 表单 ========== */
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.form-control {
-  width: 100%;
-  padding: 8px 12px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: 0.88rem;
-  font-family: inherit;
-  transition: border-color 0.15s;
-}
-
-.form-control:focus { outline: none; border-color: var(--accent); }
-.form-control::placeholder { color: var(--text-muted); }
-
-select.form-control { cursor: pointer; appearance: auto; }
-
-/* ========== 卡片 ========== */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-/* ========== 统计卡片 ========== */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  border-left: 3px solid var(--accent);
-}
-
-.stat-card.blue { border-left-color: var(--accent); }
-.stat-card.green { border-left-color: var(--success); }
-.stat-card.orange { border-left-color: var(--warning); }
-.stat-card.purple { border-left-color: #a371f7; }
-
-.stat-label {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-.stat-value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-value.accent { color: var(--accent); }
-.stat-value.success { color: var(--success); }
-.stat-value.warning { color: var(--warning); }
-.stat-value.danger { color: var(--danger); }
-
-.stat-sub {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-/* ========== 包间网格 ========== */
-.rooms-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 12px;
-}
-
-.room-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.room-card:hover { border-color: var(--text-muted); }
-.room-card.occupied { border-color: #da3633; box-shadow: 0 0 0 1px #da3633; }
-
-.room-card-header {
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.room-name {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.room-badge {
-  font-size: 0.7rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 500;
-}
-
-.badge-idle { background: rgba(63,185,80,0.12); color: #3fb950; border: 1px solid rgba(63,185,80,0.25); }
-.badge-occupied { background: rgba(248,81,73,0.12); color: #f85149; border: 1px solid rgba(248,81,73,0.25); }
-
-.room-card-body {
-  padding: 14px 16px;
-}
-
-.room-info-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.82rem;
-  margin-bottom: 6px;
-}
-
-.room-info-item .label { color: var(--text-muted); }
-.room-info-item .value { color: var(--text-primary); }
-
-.room-card-actions {
-  padding: 10px 16px;
-  border-top: 1px solid var(--border-light);
-  display: flex;
-  gap: 6px;
-}
-
-.room-card-actions .btn { flex: 1; justify-content: center; }
-
-/* ========== 计时器界面 ========== */
-.timer-display {
-  font-size: 3.5rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-  padding: 20px 0;
-  letter-spacing: 2px;
-}
-
-.timer-display.running { color: var(--accent); }
-.timer-display.stopped { color: var(--text-muted); }
-
-.timer-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.timer-info-item {
-  text-align: center;
-  padding: 10px;
-  background: var(--bg-primary);
-  border-radius: var(--radius-sm);
-}
-
-.timer-info-item .label { font-size: 0.75rem; color: var(--text-muted); }
-.timer-info-item .value { font-size: 1.05rem; font-weight: 600; margin-top: 2px; }
-
-/* ========== 表格 ========== */
-.table-wrap {
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.table th {
-  text-align: left;
-  padding: 10px 12px;
-  color: var(--text-muted);
-  font-weight: 600;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.8rem;
-  text-transform: none;
-  white-space: nowrap;
-}
-
-.table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border-light);
-  vertical-align: middle;
-}
-
-.table tr:hover td { background: rgba(255,255,255,0.02); }
-
-.table .actions-cell {
-  display: flex;
-  gap: 4px;
-}
-
-/* ========== 订单列表 ========== */
-.order-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-light);
-  font-size: 0.85rem;
-}
-
-.order-item:last-child { border-bottom: none; }
-
-.order-item .name { flex: 1; }
-.order-item .qty { color: var(--text-muted); margin: 0 10px; }
-.order-item .price { font-weight: 600; margin-right: 10px; }
-.order-item .remove { cursor: pointer; color: var(--danger); opacity: 0.6; }
-.order-item .remove:hover { opacity: 1; }
-
-.order-total {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 0 0;
-  margin-top: 10px;
-  border-top: 2px solid var(--border);
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-/* ========== 模态框 ========== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.modal-overlay.open { display: flex; }
-
-.modal {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  width: 460px;
-  max-width: 94vw;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-
-.modal-title { font-size: 1rem; font-weight: 600; }
-
-.modal-close {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.modal-close:hover { color: var(--text-primary); background: var(--bg-hover); }
-
-.modal-body {
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 14px 20px;
-  border-top: 1px solid var(--border);
-}
-
-/* ========== 空状态 ========== */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-muted);
-}
-
-.empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
-.empty-state .text { font-size: 0.95rem; margin-bottom: 16px; }
-
-/* ========== 标签 ========== */
-.tag {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 500;
-}
-
-.tag-ps { background: #003791; color: #fff; }
-.tag-xbox { background: #107c10; color: #fff; }
-.tag-switch { background: #e60012; color: #fff; }
-.tag-general { background: var(--bg-hover); color: var(--text-secondary); }
-
-/* ========== 历史会话项 ========== */
-.history-item {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  margin-bottom: 8px;
-}
-
-.history-item-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.history-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 6px;
-  font-size: 0.82rem;
-}
-
-.history-details .detail-item { color: var(--text-secondary); }
-.history-details .detail-item strong { color: var(--text-primary); }
-
-/* ========== 结算界面 ========== */
-.settlement-section {
-  background: var(--bg-primary);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin: 12px 0;
-}
-
-.settlement-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-size: 0.88rem;
-}
-
-.settlement-row.total {
-  border-top: 2px solid var(--border);
-  margin-top: 8px;
-  padding-top: 10px;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-/* ========== 搜索和过滤 ========== */
-.filter-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.filter-bar .form-control { max-width: 200px; }
-
-/* ========== 响应式 ========== */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    left: -240px;
-    top: 0;
-    bottom: 0;
-    transition: left 0.25s;
-    z-index: 50;
-  }
-
-  .sidebar.open { left: 0; }
-
-  .menu-toggle { display: block; }
-  .topbar { padding: 10px 14px; }
-  .content { padding: 14px; }
-
-  .form-row { grid-template-columns: 1fr; }
-  .rooms-grid { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-
-  .timer-display { font-size: 2.5rem; }
-}
-
-/* ========== 通知/提示 ========== */
-.toast-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 200;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.toast {
-  padding: 12px 18px;
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  animation: slideIn 0.2s ease;
-  box-shadow: var(--shadow);
-}
-
-.toast-success { background: #1a7f37; color: #fff; }
-.toast-error { background: #bd2c2c; color: #fff; }
-.toast-info { background: var(--accent); color: #0d0d0d; }
-
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-/* ========== 滚动条 ========== */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-/* ========== 结算弹窗中的金额编辑 ========== */
-.amt-edit {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.amt-edit .form-control { width: 120px; }
-
-/* ========== 订单快速添加 ========== */
-.quick-add-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 6px;
-  margin-bottom: 14px;
-}
-
-.quick-add-btn {
-  padding: 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  cursor: pointer;
-  font-size: 0.82rem;
-  font-family: inherit;
-  transition: all 0.15s;
-  text-align: center;
-}
-
-.quick-add-btn:hover {
-  background: var(--bg-hover);
-  border-color: var(--accent);
-}
-
-/* ========== 时间线样式 ========== */
-.session-timeline {
-  padding: 0;
-}
-
-.session-timeline-item {
-  display: flex;
-  gap: 12px;
-  padding: 8px 0;
-  border-left: 2px solid var(--border);
-  padding-left: 16px;
-  position: relative;
-}
-
-.session-timeline-item::before {
-  content: '';
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--border);
-  position: absolute;
-  left: -6px;
-  top: 11px;
-}
-
-.session-timeline-item.active::before { background: var(--accent); }
-
-.timeline-time { font-size: 0.78rem; color: var(--text-muted); min-width: 70px; }
-.timeline-content { flex: 1; font-size: 0.85rem; }
-
-/* ========== 日期选择器 ========== */
-.date-nav {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.date-nav .btn { padding: 4px 10px; font-size: 0.82rem; }
-.date-nav .current-date { font-size: 0.95rem; font-weight: 600; }
-
-/* ========== 状态板（大屏 TV 显示） ========== */
-.status-board {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-  padding: 10px 0;
-}
-
-.status-board-card {
-  border-radius: var(--radius-lg);
-  padding: 20px 16px;
-  text-align: center;
-  transition: transform 0.15s;
-  min-height: 160px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
-
-.status-board-card.idle {
-  background: linear-gradient(135deg, #1a3a1a, #1e4d1e);
-  border: 2px solid #2ea043;
-  box-shadow: 0 0 20px rgba(46, 160, 67, 0.15);
-}
-
-.status-board-card.occupied {
-  background: linear-gradient(135deg, #3d1212, #4d1a1a);
-  border: 2px solid #da3633;
-  box-shadow: 0 0 20px rgba(218, 54, 51, 0.15);
-}
-
-.status-board-card .status-icon {
-  font-size: 2.2rem;
-  line-height: 1;
-}
-
-.status-board-card .room-name {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.status-board-card .room-type {
-  font-size: 0.78rem;
-  opacity: 0.7;
-}
-
-.status-board-card .status-label {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.status-board-card.idle .status-label { color: #3fb950; }
-.status-board-card.occupied .status-label { color: #f85149; }
-
-.status-board-card .customer-name {
-  font-size: 0.92rem;
-  color: var(--text-secondary);
-  margin-top: 2px;
-}
-
-.status-board-card .timer-small {
-  font-size: 1.05rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  margin-top: 2px;
-}
-
-.status-board-card.idle .timer-small { color: #3fb950; }
-.status-board-card.occupied .timer-small { color: #f85149; }
-
-/* 响应式：大屏多用空间 */
-@media (min-width: 1200px) {
-  .status-board {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
-  }
-  .status-board-card {
-    min-height: 200px;
-  }
-  .status-board-card .status-icon { font-size: 3rem; }
-  .status-board-card .room-name { font-size: 1.25rem; }
-  .status-board-card .status-label { font-size: 1.6rem; }
-}
-
-/* 状态板专用顶部栏（全屏友好） */
-.statusboard-fullscreen .topbar { display: none; }
-.statusboard-fullscreen .sidebar { display: none; }
-.statusboard-fullscreen .main { margin-left: 0; }
-.statusboard-fullscreen .content { padding: 20px 30px; }
-
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;color:#eee;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;padding:16px;max-width:1200px;margin:0 auto}
+h1{color:#f5c518;font-size:20px;margin-bottom:4px}
+.sub{color:#888;font-size:12px;margin-bottom:16px}
+.nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #333}
+.nav a{padding:6px 14px;border-radius:6px;background:#222;color:#aaa;cursor:pointer;text-decoration:none;font-size:13px}
+.nav a:hover{background:#333;color:#fff}
+.nav a.act{background:#f5c518;color:#111;font-weight:600}
+.page{display:none}
+.page.act{display:block}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.stat{background:#1a1a1a;border-radius:8px;padding:14px;border-left:3px solid #f5c518}
+.stat .l{color:#888;font-size:11px}
+.stat .v{font-size:22px;font-weight:700;margin-top:2px}
+.stat .v.gr{color:#3fb950}
+.stat .v.rd{color:#f85149}
+.stat .v.yl{color:#f5c518}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.room{border-radius:8px;padding:14px;background:#1a1a1a;border:1px solid #2a2a2a}
+.room.occ{border-color:#f5c518}
+.room .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.room .n{font-weight:600;font-size:14px}
+.tag{font-size:10px;padding:1px 6px;border-radius:3px;background:#333}
+.tag.p{background:#003791;color:#fff}
+.tag.s{background:#e60012;color:#fff}
+.tag.g{background:#333;color:#aaa}
+.room .s{margin-bottom:6px;font-size:12px}
+.s.gr{color:#3fb950}
+.s.rd{color:#f85149}
+.room .i{font-size:12px;color:#888;margin-bottom:2px}
+.btn{padding:6px 12px;border-radius:5px;border:none;cursor:pointer;font-size:12px;font-family:inherit}
+.btn.y{background:#f5c518;color:#111;font-weight:600}
+.btn.g{background:#1a7f37;color:#fff}
+.btn.r{background:#bd2c2c;color:#fff}
+.btn.b{background:#222;color:#aaa;border:1px solid #333}
+.btn.s{padding:4px 8px;font-size:11px}
+.mt10{margin-top:10px}
+.gap6{display:flex;gap:6px;flex-wrap:wrap}
+.mb10{margin-bottom:10px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form.one{grid-template-columns:1fr}
+.form label{display:block;color:#888;font-size:11px;margin-bottom:3px}
+.form input,.form select{width:100%;padding:6px 10px;border-radius:5px;border:1px solid #333;background:#111;color:#eee;font-size:13px;font-family:inherit}
+.form input:focus{border-color:#f5c518;outline:none}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:8px 10px;color:#888;border-bottom:1px solid #333;font-weight:600}
+.tbl td{padding:8px 10px;border-bottom:1px solid #222}
+.hist{border-radius:8px;background:#1a1a1a;border:1px solid #2a2a2a;padding:12px;margin-bottom:6px}
+.hist .h{display:flex;justify-content:space-between;margin-bottom:6px}
+.hist .d{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:4px;font-size:12px;color:#888}
+.hist .d strong{color:#eee}
+.bigtime{font-size:40px;font-weight:700;text-align:center;padding:16px 0;font-variant-numeric:tabular-nums;color:#f5c518}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:100}
+.overlay.o{display:flex}
+.modal{background:#1a1a1a;border:1px solid #333;border-radius:10px;width:440px;max-width:94vw;padding:20px}
+.modal h3{font-size:16px;margin-bottom:14px;color:#f5c518}
+.settle{background:#111;border-radius:6px;padding:14px;margin:10px 0}
+.settle .r{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.settle .r.t{border-top:2px solid #333;margin-top:6px;padding-top:8px;font-size:16px;font-weight:700;color:#f5c518}
+.emp{padding:40px;text-align:center;color:#666}
+.emp .i{font-size:40px;margin-bottom:8px}
+.emp .t{font-size:14px}
+.qadd{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:4px;margin-bottom:10px}
+.qadd button{padding:6px;border:1px solid #333;border-radius:4px;background:#111;color:#eee;cursor:pointer;font-size:12px;font-family:inherit;}
+.qadd button:hover{border-color:#f5c518}
+h2{font-size:16px;margin-bottom:10px}
 </style>
 </head>
 <body>
-<div id="app">
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <h1 class="logo">🎮 暗峰娱乐</h1>
-      <p class="subtitle">包间管理系统</p>
-    </div>
-    <nav class="nav">
-      <a class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span><span>仪表盘</span></a>
-      <a class="nav-item" data-page="statusboard"><span class="nav-icon">📺</span><span>状态板</span></a>
-      <a class="nav-item" data-page="rooms"><span class="nav-icon">🛋️</span><span>包间管理</span></a>
-      <a class="nav-item" data-page="tracking"><span class="nav-icon">⏱️</span><span>计时管理</span></a>
-      <a class="nav-item" data-page="orders"><span class="nav-icon">🧾</span><span>订单管理</span></a>
-      <a class="nav-item" data-page="history"><span class="nav-icon">📜</span><span>历史记录</span></a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="data-actions">
-        <button class="btn btn-sm btn-outline" onclick="window.exportData()">📤 导出数据</button>
-        <button class="btn btn-sm btn-outline" onclick="document.getElementById('importFile').click()">📥 导入数据</button>
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="window.importData(event)">
-      </div>
-      <button class="btn btn-sm btn-danger" onclick="window.resetAllData()">🗑️ 重置</button>
-    </div>
-  </aside>
-  <main class="main" id="main">
-    <header class="topbar">
-      <button class="menu-toggle" id="menuToggle">☰</button>
-      <h2 class="page-title" id="pageTitle">仪表盘</h2>
-      <div class="topbar-right"><span class="current-time" id="currentTime"></span></div>
-    </header>
-    <div class="content" id="content"></div>
-  </main>
+
+<h1>🎮 暗峰娱乐</h1>
+<div class="sub">包间管理系统</div>
+
+<div class="nav" id="nav">
+  <a data-page="dash">📊 仪表盘</a>
+  <a data-page="board">📺 状态板</a>
+  <a data-page="rooms">🛋️ 包间</a>
+  <a data-page="timer">⏱️ 计时</a>
+  <a data-page="order">🧾 订单</a>
+  <a data-page="hist">📜 历史</a>
 </div>
-<div class="modal-overlay" id="modalOverlay">
+<div class="gap6 mb10">
+  <button class="btn b s" onclick="exp()">📤 导出</button>
+  <button class="btn b s" onclick="document.getElementById('imp').click()">📥 导入</button>
+  <input type="file" id="imp" accept=".json" style="display:none" onchange="imp(event)">
+  <button class="btn r s" onclick="if(confirm('确定重置？')){localStorage.clear();location.reload()}">🗑️ 重置</button>
+</div>
+
+<div id="dash" class="page act"></div>
+<div id="board" class="page"></div>
+<div id="rooms" class="page"></div>
+<div id="timer" class="page"></div>
+<div id="order" class="page"></div>
+<div id="hist" class="page"></div>
+
+<div class="overlay" id="overlay">
   <div class="modal" id="modal">
-    <div class="modal-header">
-      <h3 class="modal-title" id="modalTitle">标题</h3>
-      <button class="modal-close" onclick="window.closeModal()">✕</button>
-    </div>
-    <div class="modal-body" id="modalBody"></div>
+    <h3 id="mtitle">标题</h3>
+    <div id="mbody"></div>
   </div>
 </div>
+
 <script>
-/* ========== 暗峰娱乐 · 数据管理层 ========== */
-const Store = {
-  STORAGE_KEY: 'anfeng_store_data',
-
-  /** 默认数据 */
-  defaults() {
-    return {
-      rooms: [
-        { id: 'r1', name: 'PS5 1号包间', type: 'ps5', hourlyRate: 15, deposit: 0, sortOrder: 1 },
-        { id: 'r2', name: 'PS5 2号包间', type: 'ps5', hourlyRate: 15, deposit: 0, sortOrder: 2 },
-        { id: 'r3', name: 'PS4 1号包间', type: 'ps4', hourlyRate: 10, deposit: 0, sortOrder: 3 },
-        { id: 'r4', name: 'PS4 2号包间', type: 'ps4', hourlyRate: 10, deposit: 0, sortOrder: 4 },
-        { id: 'r5', name: 'Switch 包间',   type: 'switch', hourlyRate: 12, deposit: 0, sortOrder: 5 },
-      ],
-      sessions: [],
-      orders: [],
-      nextId: { rooms: 6, sessions: 1, orders: 1 },
-      createdAt: Date.now(),
-    };
-  },
-
-  /** 加载数据 */
-  load() {
-    try {
-      const raw = localStorage.getItem(this.STORAGE_KEY);
-      if (raw) {
-        const data = JSON.parse(raw);
-        const def = this.defaults();
-        for (const key of Object.keys(def)) {
-          if (!(key in data)) data[key] = def[key];
-        }
-        return data;
-      }
-    } catch (e) {
-      console.warn('加载数据失败，使用默认值', e);
-    }
-    return this.defaults();
-  },
-
-  /** 保存数据 */
-  save(data) {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.error('保存数据失败', e);
-      showToast('数据保存失败，请检查浏览器存储空间', 'error');
-    }
-  },
-
-  /** 获取所有数据（简写） */
-  get() { return this.load(); },
-
-  /** ---- 包间 CRUD ---- */
-  getRooms() { return this.get().rooms; },
-
-  getRoom(roomId) {
-    return this.getRooms().find(r => r.id === roomId);
-  },
-
-  addRoom(name, type, hourlyRate, deposit = 0) {
-    const data = this.get();
-    const id = 'r' + (data.nextId.rooms++);
-    data.rooms.push({
-      id, name, type, hourlyRate: Number(hourlyRate), deposit: Number(deposit),
-      sortOrder: data.rooms.length + 1,
-    });
-    this.save(data);
-    return id;
-  },
-
-  updateRoom(roomId, updates) {
-    const data = this.get();
-    const room = data.rooms.find(r => r.id === roomId);
-    if (!room) return false;
-    Object.assign(room, updates);
-    this.save(data);
-    return true;
-  },
-
-  deleteRoom(roomId) {
-    const data = this.get();
-    const active = data.sessions.find(s => s.roomId === roomId && s.status === 'active');
-    if (active) {
-      showToast('该包间有正在进行中的计时，无法删除', 'error');
-      return false;
-    }
-    data.rooms = data.rooms.filter(r => r.id !== roomId);
-    this.save(data);
-    return true;
-  },
-
-  /** ---- 会话 CRUD ---- */
-  getSessions() { return this.get().sessions; },
-
-  getSession(sessionId) {
-    return this.getSessions().find(s => s.id === sessionId);
-  },
-
-  /** 获取当前活跃的会话 */
-  getActiveSessions() {
-    return this.getSessions().filter(s => s.status === 'active');
-  },
-
-  /** 获取指定包间的活跃会话 */
-  getActiveSessionForRoom(roomId) {
-    return this.getSessions().find(s => s.roomId === roomId && s.status === 'active');
-  },
-
-  /** 开启一个新会话 */
-  startSession(roomId, customerName = '', customerPhone = '', deposit = 0) {
-    const data = this.get();
-    const existing = data.sessions.find(s => s.roomId === roomId && s.status === 'active');
-    if (existing) {
-      showToast('该包间已有正在进行的计时', 'error');
-      return null;
-    }
-    const id = 's' + (data.nextId.sessions++);
-    const session = {
-      id,
-      roomId,
-      customerName: customerName || '散客',
-      customerPhone,
-      startTime: Date.now(),
-      endTime: null,
-      status: 'active',
-      totalTime: 0,
-      actualTime: 0,
-      timeFee: 0,
-      deposit: Number(deposit),
-      orderTotal: 0,
-      totalAmount: 0,
-      discountPercent: 0,
-      discountFixed: 0,
-      customHours: null,
-      customRate: null,
-      autoHours: 0,
-      notes: '',
-      createdAt: Date.now(),
-    };
-    data.sessions.push(session);
-    this.save(data);
-    return id;
-  },
-
-  /**
-   * 结束会话（结算）
-   * @param {string} sessionId
-   * @param {number} endTime - 结束时间戳
-   * @param {object} options - 自定义结算参数
-   * @param {number} options.customHours  - 手动设置结算小时数（不传则自动计算）
-   * @param {number} options.customRate   - 手动设置费率（不传则用包间标准费率）
-   * @param {number} options.discountPercent - 折扣百分比 0-100
-   * @param {number} options.discountFixed   - 固定减免金额
-   */
-  endSession(sessionId, endTime = Date.now(), options = {}) {
-    const { customHours, customRate, discountPercent, discountFixed } = options;
-    const data = this.get();
-    const session = data.sessions.find(s => s.id === sessionId);
-    if (!session || session.status !== 'active') return null;
-
-    const room = data.rooms.find(r => r.id === session.roomId);
-    if (!room) return null;
-
-    const durationMs = endTime - session.startTime;
-    const durationMin = Math.ceil(durationMs / 60000);
-    // 自动计算：不足1小时按1小时算
-    const autoHours = Math.ceil(durationMin / 60);
-
-    // 手动值优先（允许 0 作为合法手动输入）
-    const hasCustomHours = (customHours !== undefined && customHours !== null && customHours !== '');
-    const hasCustomRate  = (customRate  !== undefined && customRate  !== null && customRate  !== '');
-
-    const billedHours = hasCustomHours ? Number(customHours) : autoHours;
-    const billedRate  = hasCustomRate  ? Number(customRate)  : room.hourlyRate;
-
-    session.endTime = endTime;
-    session.status = 'completed';
-    session.totalTime = billedHours * 60;     // 结算所用的总分钟数
-    session.actualTime = durationMin;          // 实际时长（仅参考）
-
-    // 计时费用
-    session.timeFee = billedHours * billedRate;
-
-    // 订单总额
-    const sessionOrders = data.orders.filter(o => o.sessionId === sessionId);
-    session.orderTotal = sessionOrders.reduce((sum, o) => sum + o.price * o.quantity, 0);
-
-    // 折扣计算
-    const pct = (discountPercent !== undefined && discountPercent !== null && discountPercent !== '')
-      ? Number(discountPercent) : 0;
-    const fix = (discountFixed !== undefined && discountFixed !== null && discountFixed !== '')
-      ? Number(discountFixed) : 0;
-    session.discountPercent = pct;
-    session.discountFixed = fix;
-
-    const subtotal = session.timeFee + session.orderTotal;
-    const discountAmount = Math.round(subtotal * pct / 100 * 100) / 100 + fix;
-
-    // 应收 = 计时费 + 商品费 - 押金 - 折扣
-    session.totalAmount = Math.max(0, Math.round((subtotal - session.deposit - discountAmount) * 100) / 100);
-
-    // 记录自定义值供历史查看
-    session.customHours = hasCustomHours ? billedHours : null;
-    session.customRate  = hasCustomRate  ? billedRate  : null;
-    session.autoHours = autoHours;
-
-    this.save(data);
-    return session;
-  },
-
-  /** 删除会话 */
-  deleteSession(sessionId) {
-    const data = this.get();
-    data.sessions = data.sessions.filter(s => s.id !== sessionId);
-    data.orders = data.orders.filter(o => o.sessionId !== sessionId);
-    this.save(data);
-  },
-
-  /** 获取今天的会话 */
-  getTodaySessions() {
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const todayEnd = todayStart + 86400000;
-    return this.getSessions().filter(s => {
-      const t = s.status === 'active' ? s.startTime : (s.endTime || s.startTime);
-      return t >= todayStart && t < todayEnd;
-    });
-  },
-
-  /** 获取指定日期的已结算会话 */
-  getCompletedSessionsByDate(dateStr) {
-    const start = new Date(dateStr + 'T00:00:00+08:00').getTime();
-    const end = start + 86400000;
-    return this.getSessions().filter(s => {
-      if (s.status !== 'completed' || !s.endTime) return false;
-      return s.endTime >= start && s.endTime < end;
-    });
-  },
-
-  /** 获取所有已结算会话 */
-  getAllCompletedSessions() {
-    return this.getSessions().filter(s => s.status === 'completed');
-  },
-
-  /** ---- 订单 CRUD ---- */
-  getOrders() { return this.get().orders; },
-
-  getOrdersForSession(sessionId) {
-    return this.getOrders().filter(o => o.sessionId === sessionId);
-  },
-
-  addOrder(sessionId, itemName, price, quantity = 1) {
-    const data = this.get();
-    const id = 'o' + (data.nextId.orders++);
-    data.orders.push({
-      id, sessionId, itemName, price: Number(price), quantity: Number(quantity),
-      time: Date.now(),
-    });
-    this.save(data);
-    return id;
-  },
-
-  removeOrder(orderId) {
-    const data = this.get();
-    data.orders = data.orders.filter(o => o.id !== orderId);
-    this.save(data);
-  },
-
-  /** 获取所有已完成会话的订单 */
-  getCompletedOrders() {
-    const completedIds = this.getAllCompletedSessions().map(s => s.id);
-    return this.getOrders().filter(o => completedIds.includes(o.sessionId));
-  },
-
-  /** ---- 统计数据 ---- */
-  getStats() {
-    const data = this.get();
-    const rooms = data.rooms;
-    const activeSessions = data.sessions.filter(s => s.status === 'active');
-    const todayCompleted = data.sessions.filter(s => {
-      if (s.status !== 'completed' || !s.endTime) return false;
-      const now = new Date();
-      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-      return s.endTime >= start && s.endTime < start + 86400000;
-    });
-
-    const todayRevenue = todayCompleted.reduce((sum, s) => sum + s.totalAmount, 0);
-    const totalRevenue = data.sessions
-      .filter(s => s.status === 'completed')
-      .reduce((sum, s) => sum + s.totalAmount, 0);
-
-    return {
-      totalRooms: rooms.length,
-      activeRooms: activeSessions.length,
-      idleRooms: rooms.length - activeSessions.length,
-      todaySessions: todayCompleted.length,
-      todayRevenue,
-      totalRevenue,
-      activeSessions: activeSessions.length,
-    };
-  },
-
-  /** ---- 重置所有数据 ---- */
-  reset() {
-    const def = this.defaults();
-    this.save(def);
-    return def;
-  },
+// ===== 数据层 =====
+var KEY = 'af_data';
+var DEF = {
+  rooms: [
+    {id:'r1',name:'PS5 1号厅',type:'ps5',rate:15,deposit:0},
+    {id:'r2',name:'PS5 2号厅',type:'ps5',rate:15,deposit:0},
+    {id:'r3',name:'PS4 1号厅',type:'ps4',rate:10,deposit:0},
+    {id:'r4',name:'PS4 2号厅',type:'ps4',rate:10,deposit:0},
+    {id:'r5',name:'Switch厅',type:'switch',rate:12,deposit:0}
+  ],
+  sessions: [],
+  orders: [],
+  seq: {rooms:6,s:1,o:1}
 };
 
-/* ========== 工具函数 ========== */
+function load() {
+  var d = DEF;
+  try {
+    var r = localStorage.getItem(KEY);
+    if (r) { d = JSON.parse(r); for (var k in DEF) { if (!(k in d)) d[k] = DEF[k]; } }
+  } catch(e) {}
+  return d;
+}
+function save(d) {
+  try { localStorage.setItem(KEY, JSON.stringify(d)); } catch(e) { alert('保存失败'); }
+}
+function D() { return load(); }
 
-/** 格式化时间 HH:mm:ss */
-function formatTime(ts) {
-  const d = new Date(ts);
-  return d.toLocaleTimeString('zh-CN', { hour12: false });
+function newId(d, prefix) {
+  return prefix + (d.seq[prefix]++);
 }
 
-/** 格式化日期 YYYY-MM-DD */
-function formatDate(ts) {
-  const d = new Date(ts);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+// 工具
+function fm(v) { return '¥' + Number(v).toFixed(2); }
+function ft(t) { var d=new Date(t); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2); }
+function fd(t) { var d=new Date(t); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+function fdt(t) { return fd(t)+' '+ft(t); }
+function dur(s) { var h=Math.floor(s/3600); var m=Math.floor((s%3600)/60); var s2=Math.floor(s%60); return ('0'+h).slice(-2)+':'+('0'+m).slice(-2)+':'+('0'+s2).slice(-2); }
+function dbs(t1,t2) { return Math.floor((t2-t1)/1000); }
+function tl(t) { var m={ps5:'PS5',ps4:'PS4',switch:'Switch',general:'通用'}; return m[t]||t; }
+function tc(t) { var m={ps5:'tag p',ps4:'tag p',switch:'tag s',general:'tag g'}; return m[t]||'tag g'; }
+function toast(msg,t) {
+  var el=document.createElement('div');
+  el.style.cssText='position:fixed;bottom:20px;right:20px;padding:10px 16px;border-radius:6px;font-size:13px;z-index:200;'+(t==='e'?'background:#bd2c2c;color:#fff':'background:#1a7f37;color:#fff');
+  el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(function(){el.style.opacity='0';el.style.transition='opacity 0.3s'},2000);
+  setTimeout(function(){el.remove()},2500);
 }
 
-/** 格式化日期时间 */
-function formatDateTime(ts) {
-  return formatDate(ts) + ' ' + formatTime(ts);
-}
-
-/** 格式化秒数为 HH:MM:SS */
-function formatDuration(seconds) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-}
-
-/** 计算两个时间戳之间的时长（秒） */
-function durationBetween(start, end) {
-  return Math.floor((end - start) / 1000);
-}
-
-/** 根据类型返回显示名 */
-function getTypeLabel(type) {
-  const map = { ps5: 'PS5', ps4: 'PS4', switch: 'Switch', general: '通用' };
-  return map[type] || type;
-}
-
-/** 根据类型返回标签 class */
-function getTypeTagClass(type) {
-  const map = { ps5: 'tag-ps', ps4: 'tag-ps', switch: 'tag-switch', general: 'tag-general' };
-  return map[type] || 'tag-general';
-}
-
-/** Toast 通知 */
-function showToast(msg, type = 'info') {
-  let container = document.querySelector('.toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.className = 'toast-container';
-    document.body.appendChild(container);
-  }
-  const el = document.createElement('div');
-  el.className = `toast toast-${type}`;
-  el.textContent = msg;
-  container.appendChild(el);
-  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; }, 2500);
-  setTimeout(() => el.remove(), 3000);
-}
-
-/** 格式化金额 */
-function formatMoney(amount) {
-  return '¥' + Number(amount).toFixed(2);
-}
-
-/* ========== 导出/导入数据 ========== */
-function exportData() {
-  const data = Store.get();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `暗峰娱乐数据_${formatDate(Date.now())}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('数据已导出', 'success');
-}
-
-function importData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.rooms || !data.sessions || !data.orders) {
-        showToast('数据格式不正确', 'error');
-        return;
-      }
-      Store.save(data);
-      showToast('数据已导入，页面即将刷新', 'success');
-      setTimeout(() => location.reload(), 800);
-    } catch (err) {
-      showToast('导入失败：' + err.message, 'error');
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
-
-function resetAllData() {
-  if (!confirm('确定要重置所有数据吗？此操作不可撤销！')) return;
-  Store.reset();
-  showToast('数据已重置', 'info');
-  setTimeout(() => location.reload(), 500);
-}
-
-/* ========== 暗峰娱乐 · 应用主逻辑 ========== */
-
-let appState = {
-  currentPage: 'dashboard',
-  timerIntervals: {},
-  currentDate: new Date(),
-  selectedOrderSessionId: null,
-};
-
-/* ========== 初始化 ========== */
-document.addEventListener('DOMContentLoaded', () => {
-  initNavigation();
-  navigateTo('dashboard');
-  updateClock();
-  setInterval(updateClock, 1000);
+// ===== 导航 =====
+document.getElementById('nav').addEventListener('click', function(e) {
+  var a = e.target.closest('[data-page]');
+  if (!a) return;
+  var p = a.dataset.page;
+  document.querySelectorAll('.nav a').forEach(function(x){x.classList.remove('act')});
+  a.classList.add('act');
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('act')});
+  document.getElementById(p).classList.add('act');
+  render(p);
 });
 
-function updateClock() {
-  const el = document.getElementById('currentTime');
-  if (el) el.textContent = new Date().toLocaleString('zh-CN', { hour12: false });
+function render(p) {
+  var m = {dash:rdash, board:rboard, rooms:rrooms, timer:rtimer, order:rorder, hist:rhist};
+  if (m[p]) m[p]();
 }
 
-/* ========== 导航 ========== */
-function initNavigation() {
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const page = item.dataset.page;
-      navigateTo(page);
-      document.getElementById('sidebar').classList.remove('open');
-    });
+// ===== 仪表盘 =====
+function rdash() {
+  var d = D();
+  var rooms = d.rooms;
+  var act = d.sessions.filter(function(s){return s.status==='a'});
+  var today = d.sessions.filter(function(s){
+    if(s.status!=='c'||!s.end) return false;
+    var t=new Date(); var st=new Date(t.getFullYear(),t.getMonth(),t.getDate()).getTime();
+    return s.end>=st && s.end<st+86400000;
   });
-
-  document.getElementById('menuToggle').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
-  });
-}
-
-function navigateTo(page) {
-  appState.currentPage = page;
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
-  if (navItem) navItem.classList.add('active');
-
-  const titles = {
-    dashboard: '仪表盘',
-    rooms: '包间管理',
-    tracking: '计时管理',
-    orders: '订单管理',
-    history: '历史记录',
-    statusboard: '状态板',
-  };
-  document.getElementById('pageTitle').textContent = titles[page] || '暗峰娱乐';
-
-  const content = document.getElementById('content');
-  switch (page) {
-    case 'dashboard': renderDashboard(content); break;
-    case 'rooms': renderRooms(content); break;
-    case 'tracking': renderTracking(content); break;
-    case 'orders': renderOrders(content); break;
-    case 'history': renderHistory(content); break;
-    case 'statusboard': renderStatusBoard(content); break;
+  var rev = today.reduce(function(s,x){return s+x.total},0);
+  var trev = d.sessions.filter(function(s){return s.status==='c'}).reduce(function(s,x){return s+x.total},0);
+  var h = '<div class="stats">';
+  h += '<div class="stat"><div class="l">包间总数</div><div class="v yl">'+rooms.length+'</div><div class="l">空闲 '+(rooms.length-act.length)+' · 使用 '+act.length+'</div></div>';
+  h += '<div class="stat"><div class="l">今日上机</div><div class="v gr">'+today.length+'</div><div class="l">当前 '+act.length+' 间使用</div></div>';
+  h += '<div class="stat"><div class="l">今日营收</div><div class="v yl">'+fm(rev)+'</div><div class="l">累计 '+fm(trev)+'</div></div>';
+  h += '<div class="stat" style="border-left-color:#a371f7"><div class="l">使用中</div><div class="v" style="color:#a371f7">'+act.length+'</div><div class="l">空闲 '+(rooms.length-act.length)+' 间</div></div>';
+  h += '</div><h2>包间状态</h2><div class="rooms">';
+  for (var i=0;i<rooms.length;i++) {
+    var r=rooms[i];
+    var s=act.find(function(x){return x.roomId===r.id});
+    var occ=!!s;
+    h += '<div class="room'+(occ?' occ':'')+'">';
+    h += '<div class="h"><span class="n">'+r.name+'</span><span class="tag '+tc(r.type)+'">'+tl(r.type)+'</span></div>';
+    h += '<div class="s '+(occ?'rd':'gr')+'">'+(occ?'● 有客':'○ 空闲')+'</div>';
+    h += '<div class="i">'+r.rate+' 元/小时</div>';
+    if(occ) h += '<div class="i">顾客: '+s.customer+'</div>';
+    h += '<div class="gap6 mt10">';
+    if(occ) h += '<button class="btn g s" onclick="navOrder(\''+s.id+'\')">🧾 订单</button><button class="btn r s" onclick="endSess(\''+s.id+'\')">💰 结账</button>';
+    else h += '<button class="btn y s" onclick="startSess(\''+r.id+'\')">▶ 开台</button>';
+    h += '</div></div>';
   }
+  h += '</div>';
+  document.getElementById('dash').innerHTML = h;
+  // 启动计时更新
+  for (var i=0;i<act.length;i++) updateTimer(act[i].id);
 }
 
-/* ============================================================
-   仪表盘
-   ============================================================ */
-function renderDashboard(el) {
-  const stats = Store.getStats();
-  const rooms = Store.getRooms();
-  const activeSessions = Store.getActiveSessions();
-
-  el.innerHTML = `
-    <div class="stats-grid">
-      <div class="stat-card blue">
-        <div class="stat-label">包间总数</div>
-        <div class="stat-value accent">${stats.totalRooms}</div>
-        <div class="stat-sub">空闲 ${stats.idleRooms} · 使用中 ${stats.activeRooms}</div>
-      </div>
-      <div class="stat-card green">
-        <div class="stat-label">今日上机</div>
-        <div class="stat-value success">${stats.todaySessions}</div>
-        <div class="stat-sub">当前 ${stats.activeRooms} 间使用中</div>
-      </div>
-      <div class="stat-card orange">
-        <div class="stat-label">今日营收</div>
-        <div class="stat-value warning">${formatMoney(stats.todayRevenue)}</div>
-        <div class="stat-sub">累计 ${formatMoney(stats.totalRevenue)}</div>
-      </div>
-      <div class="stat-card purple">
-        <div class="stat-label">使用中包间</div>
-        <div class="stat-value" style="color:#a371f7">${stats.activeRooms}</div>
-        <div class="stat-sub">空闲 ${stats.idleRooms} 间</div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-header">
-        <span class="card-title">包间状态一览</span>
-        <button class="btn btn-sm btn-primary" onclick="navigateTo('tracking')">⏱️ 管理计时</button>
-      </div>
-      <div class="rooms-grid" id="dashboardRooms">
-        ${renderRoomCards(rooms, activeSessions)}
-      </div>
-    </div>
-  `;
-}
-
-function renderRoomCards(rooms, activeSessions) {
-  if (!rooms || rooms.length === 0) {
-    return `<div class="empty-state"><div class="icon">🛋️</div><div class="text">还没有包间，请先添加包间</div></div>`;
+// ===== 状态板 =====
+function rboard() {
+  var d=D();
+  var rooms=d.rooms;
+  var act=d.sessions.filter(function(s){return s.status==='a'});
+  var h = '<h2>📺 包间状态板 <span style="color:#666;font-weight:400;font-size:13px">'+new Date().toLocaleString('zh-CN',{hour12:false})+'</span></h2>';
+  h += '<div class="rooms">';
+  for (var i=0;i<rooms.length;i++) {
+    var r=rooms[i];
+    var s=act.find(function(x){return x.roomId===r.id});
+    var occ=!!s;
+    var bg=occ?'linear-gradient(135deg,#3d1212,#4d1a1a)':'linear-gradient(135deg,#1a3a1a,#1e4d1e)';
+    var bd=occ?'2px solid #da3633':'2px solid #2ea043';
+    h += '<div style="background:'+bg+';border:'+bd+';border-radius:10px;padding:20px;text-align:center;min-height:150px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px">';
+    h += '<div style="font-size:28px">'+(occ?'🟢':'🟢')+'</div>';
+    h += '<div style="font-size:16px;font-weight:700">'+r.name+'</div>';
+    h += '<div style="font-size:11px;opacity:0.7">'+tl(r.type)+'</div>';
+    h += '<div style="font-size:22px;font-weight:700;color:'+(occ?'#f85149':'#3fb950')+'">'+(occ?'有客':'空闲')+'</div>';
+    if(occ) h += '<div style="font-size:13px;color:#aaa">'+s.customer+'</div>';
+    if(occ) h += '<div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:'+(occ?'#f85149':'#3fb950')+'" id="bt-'+s.id+'">--:--:--</div>';
+    h += '</div>';
   }
-
-  return rooms.map(room => {
-    const active = activeSessions.find(s => s.roomId === room.id);
-    const isOccupied = !!active;
-
-    return `
-      <div class="room-card ${isOccupied ? 'occupied' : ''}">
-        <div class="room-card-header">
-          <span class="room-name">${room.name}</span>
-          <span class="tag ${getTypeTagClass(room.type)}">${getTypeLabel(room.type)}</span>
-        </div>
-        <div class="room-card-body">
-          <div class="room-info-item">
-            <span class="label">状态</span>
-            <span class="room-badge ${isOccupied ? 'badge-occupied' : 'badge-idle'}">
-              ${isOccupied ? '有客' : '空闲'}
-            </span>
-          </div>
-          <div class="room-info-item">
-            <span class="label">收费标准</span>
-            <span class="value">${room.hourlyRate} 元/小时</span>
-          </div>
-          ${isOccupied ? `
-          <div class="room-info-item">
-            <span class="label">顾客</span>
-            <span class="value">${active.customerName}</span>
-          </div>
-          <div class="room-info-item">
-            <span class="label">已用时长</span>
-            <span class="value timer-value" data-session-id="${active.id}">--:--:--</span>
-          </div>
-          ` : ''}
-        </div>
-        <div class="room-card-actions">
-          ${isOccupied
-            ? `<button class="btn btn-sm btn-success" onclick="navigateTo('orders')">🧾 订单</button>
-               <button class="btn btn-sm btn-danger" onclick="endSessionModal('${active.id}')">结账</button>`
-            : `<button class="btn btn-sm btn-primary" onclick="openStartSession('${room.id}')">▶ 开台</button>`
-          }
-        </div>
-      </div>
-    `;
-  }).join('');
+  h += '</div>';
+  document.getElementById('board').innerHTML = h;
+  for (var i=0;i<act.length;i++) updateBoardTimer(act[i].id);
 }
 
-/* ============================================================
-   包间管理
-
-/* ============================================================
-   状态板（大屏 TV 友好）
-   ============================================================ */
-function renderStatusBoard(el) {
-  const rooms = Store.getRooms();
-  const activeSessions = Store.getActiveSessions();
-
-  el.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h3 style="font-size:1.3rem;font-weight:700;">📺 包间状态板</h3>
-      <span style="font-size:1.1rem;font-weight:600;color:var(--text-muted);">${new Date().toLocaleString("zh-CN",{hour12:false})}</span>
-    </div>
-    <div class="status-board">
-      ${rooms.length === 0 ? `<div class="empty-state"><div class="icon">🛋️</div><div class="text">暂无包间</div></div>` :
-        rooms.map(room => {
-          const session = activeSessions.find(s => s.roomId === room.id);
-          const isOccupied = !!session;
-          return `
-            <div class="status-board-card ${isOccupied ? "occupied" : "idle"}">
-              <div class="status-icon">${isOccupied ? "🟢" : "🟢"}</div>
-              <div class="room-name">${room.name}</div>
-              <div class="room-type">${getTypeLabel(room.type)}</div>
-              <div class="status-label">${isOccupied ? "有客" : "空闲"}</div>
-              ${isOccupied ? `<div class="customer-name">${session.customerName}</div>`
-                + `<div class="timer-small" id="sb-timer-${session.id}">--:--:--</div>` : ""}
-            </div>
-          `;
-        }).join("")
-      }
-    </div>
-  `;
-
-  /* 启动计时器 */
-  activeSessions.forEach(s => startStatusBoardTimer(s.id));
-}
-
-function startStatusBoardTimer(sessionId) {
-  const update = () => {
-    const session = Store.getSession(sessionId);
-    if (!session || session.status !== "active") return;
-    const el = document.getElementById("sb-timer-" + sessionId);
-    if (el) el.textContent = formatDuration(durationBetween(session.startTime, Date.now()));
-  };
-  update();
-  setInterval(update, 1000);
-}
-
-   ============================================================ */
-function renderRooms(el) {
-  const rooms = Store.getRooms();
-
-  el.innerHTML = `
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-header">
-        <span class="card-title">包间列表</span>
-        <button class="btn btn-sm btn-primary" onclick="showAddRoomModal()">＋ 添加包间</button>
-      </div>
-      ${rooms.length === 0 ? `
-        <div class="empty-state">
-          <div class="icon">🛋️</div>
-          <div class="text">暂无包间，点击上方按钮添加</div>
-        </div>
-      ` : `
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>包间名称</th>
-                <th>类型</th>
-                <th>收费标准</th>
-                <th>押金</th>
-                <th>状态</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rooms.map(room => {
-                const active = Store.getActiveSessionForRoom(room.id);
-                return `
-                  <tr>
-                    <td><strong>${room.name}</strong></td>
-                    <td><span class="tag ${getTypeTagClass(room.type)}">${getTypeLabel(room.type)}</span></td>
-                    <td>${room.hourlyRate} 元/小时</td>
-                    <td>${room.deposit > 0 ? formatMoney(room.deposit) : '无'}</td>
-                    <td><span class="room-badge ${active ? 'badge-occupied' : 'badge-idle'}">${active ? '有客' : '空闲'}</span></td>
-                    <td class="actions-cell">
-                      <button class="btn btn-sm btn-outline" onclick="showEditRoomModal('${room.id}')">编辑</button>
-                      <button class="btn btn-sm btn-danger" onclick="deleteRoomConfirm('${room.id}')" ${active ? 'disabled' : ''}>删除</button>
-                    </td>
-                  </tr>
-                `;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-      `}
-    </div>
-  `;
-}
-
-/* ============================================================
-   计时管理
-   ============================================================ */
-function renderTracking(el) {
-  const rooms = Store.getRooms();
-  const activeSessions = Store.getActiveSessions();
-
-  el.innerHTML = `
-    <div class="stats-grid" style="margin-bottom:16px;">
-      <div class="stat-card green">
-        <div class="stat-label">使用中包间</div>
-        <div class="stat-value success">${activeSessions.length}</div>
-        <div class="stat-sub">共 ${rooms.length} 间</div>
-      </div>
-      <div class="stat-card blue">
-        <div class="stat-label">空闲包间</div>
-        <div class="stat-value accent">${rooms.length - activeSessions.length}</div>
-        <div class="stat-sub">可开台</div>
-      </div>
-    </div>
-
-    <div class="rooms-grid" id="trackingGrid">
-      ${rooms.map(room => {
-        const session = activeSessions.find(s => s.roomId === room.id);
-        return renderTrackingCard(room, session);
-      }).join('')}
-    </div>
-  `;
-
-  activeSessions.forEach(s => startTimer(s.id));
-}
-
-function renderTrackingCard(room, session) {
-  const isOccupied = !!session;
-
-  return `
-    <div class="room-card ${isOccupied ? 'occupied' : ''}">
-      <div class="room-card-header">
-        <span class="room-name">${room.name}</span>
-        <span class="tag ${getTypeTagClass(room.type)}">${getTypeLabel(room.type)}</span>
-      </div>
-      <div class="room-card-body">
-        ${isOccupied ? `
-          <div class="timer-display running" id="timer-${session.id}">00:00:00</div>
-          <div class="timer-info">
-            <div class="timer-info-item">
-              <div class="label">顾客</div>
-              <div class="value">${session.customerName}</div>
-            </div>
-            <div class="timer-info-item">
-              <div class="label">费率</div>
-              <div class="value">${room.hourlyRate} 元/小时</div>
-            </div>
-            <div class="timer-info-item">
-              <div class="label">开始时间</div>
-              <div class="value">${formatTime(session.startTime)}</div>
-            </div>
-            <div class="timer-info-item">
-              <div class="label">预计费用</div>
-              <div class="value" id="fee-${session.id}">¥0.00</div>
-            </div>
-          </div>
-        ` : `
-          <div class="timer-display stopped">空闲</div>
-          <div class="timer-info">
-            <div class="timer-info-item">
-              <div class="label">费率</div>
-              <div class="value">${room.hourlyRate} 元/小时</div>
-            </div>
-            <div class="timer-info-item">
-              <div class="label">状态</div>
-              <div class="value" style="color:var(--text-muted)">等待开台</div>
-            </div>
-          </div>
-        `}
-      </div>
-      <div class="room-card-actions">
-        ${isOccupied
-          ? `<button class="btn btn-sm btn-outline" onclick="navigateTo('orders')">🧾 订单</button>
-             <button class="btn btn-sm btn-danger" onclick="endSessionModal('${session.id}')">🛑 结账</button>`
-          : `<button class="btn btn-sm btn-primary btn-lg" style="flex:2" onclick="openStartSession('${room.id}')">▶ 开台</button>`
-        }
-      </div>
-    </div>
-  `;
-}
-
-/* ========== 计时器逻辑 ========== */
-function startTimer(sessionId) {
-  if (appState.timerIntervals[sessionId]) {
-    clearInterval(appState.timerIntervals[sessionId]);
-  }
-
-  const session = Store.getSession(sessionId);
-  if (!session || session.status !== 'active') return;
-
-  const room = Store.getRoom(session.roomId);
-  if (!room) return;
-
-  const update = () => {
-    const elapsed = durationBetween(session.startTime, Date.now());
-    const displayEl = document.getElementById(`timer-${sessionId}`);
-    const feeEl = document.getElementById(`fee-${sessionId}`);
-
-    if (displayEl) {
-      displayEl.textContent = formatDuration(elapsed);
+// ===== 包间管理 =====
+function rrooms() {
+  var d=D();
+  var rooms=d.rooms;
+  var h = '<div class="gap6 mb10"><button class="btn y" onclick="addRoom()">＋ 添加包间</button></div>';
+  if(rooms.length===0) h += '<div class="emp"><div class="i">🛋️</div><div class="t">暂无包间</div></div>';
+  else {
+    h += '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>名称</th><th>类型</th><th>费率</th><th>押金</th><th>状态</th><th>操作</th></tr></thead><tbody>';
+    for (var i=0;i<rooms.length;i++) {
+      var r=rooms[i];
+      var s=d.sessions.find(function(x){return x.roomId===r.id&&x.status==='a'});
+      h += '<tr><td><strong>'+r.name+'</strong></td><td><span class="tag '+tc(r.type)+'">'+tl(r.type)+'</span></td><td>'+r.rate+' 元/时</td><td>'+(r.deposit>0?fm(r.deposit):'无')+'</td>';
+      h += '<td><span style="color:'+(s?'#f85149':'#3fb950')+'">'+(s?'有客':'空闲')+'</span></td>';
+      h += '<td class="gap6"><button class="btn b s" onclick="editRoom(\''+r.id+'\')">编辑</button>';
+      if(!s) h += '<button class="btn r s" onclick="delRoom(\''+r.id+'\')">删除</button>';
+      h += '</td></tr>';
     }
-    if (feeEl) {
-      const hours = Math.ceil(elapsed / 3600);
-      feeEl.textContent = formatMoney(hours * room.hourlyRate);
+    h += '</tbody></table></div>';
+  }
+  document.getElementById('rooms').innerHTML = h;
+}
+
+// ===== 计时管理 =====
+rtimers = {};
+function rtimer() {
+  var d=D();
+  var rooms=d.rooms;
+  var act=d.sessions.filter(function(s){return s.status==='a'});
+  var h = '<div class="stats"><div class="stat" style="border-left-color:#3fb950"><div class="l">使用中</div><div class="v gr">'+act.length+'</div><div class="l">共 '+rooms.length+' 间</div></div>';
+  h += '<div class="stat" style="border-left-color:#58a6ff"><div class="l">空闲</div><div class="v yl">'+(rooms.length-act.length)+'</div><div class="l">可开台</div></div></div>';
+  h += '<div class="rooms">';
+  for (var i=0;i<rooms.length;i++) {
+    var r=rooms[i];
+    var s=act.find(function(x){return x.roomId===r.id});
+    h += '<div class="room'+(s?' occ':'')+'">';
+    h += '<div class="h"><span class="n">'+r.name+'</span><span class="tag '+tc(r.type)+'">'+tl(r.type)+'</span></div>';
+    if(s) {
+      var sec=dbs(s.start,Date.now());
+      h += '<div class="bigtime" id="tm-'+s.id+'">'+dur(sec)+'</div>';
+      h += '<div class="stats" style="grid-template-columns:1fr 1fr;margin-bottom:0">';
+      h += '<div class="stat" style="padding:8px;border-left:0;background:transparent"><div class="l">顾客</div><div class="v" style="font-size:15px">'+s.customer+'</div></div>';
+      h += '<div class="stat" style="padding:8px;border-left:0;background:transparent"><div class="l">费率</div><div class="v" style="font-size:15px">'+r.rate+' 元/时</div></div>';
+      h += '</div>';
+      h += '<div class="gap6 mt10"><button class="btn g s" onclick="navOrder(\''+s.id+'\')">🧾 订单</button><button class="btn r s" onclick="endSess(\''+s.id+'\')">💰 结账</button></div>';
+    } else {
+      h += '<div class="bigtime" style="color:#444;font-size:30px">空闲</div>';
+      h += '<div class="mt10"><button class="btn y" onclick="startSess(\''+r.id+'\')">▶ 开台</button></div>';
     }
-
-    const dashTimer = document.querySelector(`.timer-value[data-session-id="${sessionId}"]`);
-    if (dashTimer) dashTimer.textContent = formatDuration(elapsed);
-
-    const runningFee = document.getElementById(`running-fee-${sessionId}`);
-    if (runningFee) {
-      const hours = Math.ceil(elapsed / 3600);
-      runningFee.textContent = formatMoney(hours * room.hourlyRate);
-    }
-  };
-
-  update();
-  appState.timerIntervals[sessionId] = setInterval(update, 1000);
-}
-
-function stopTimer(sessionId) {
-  if (appState.timerIntervals[sessionId]) {
-    clearInterval(appState.timerIntervals[sessionId]);
-    delete appState.timerIntervals[sessionId];
+    h += '</div>';
   }
+  h += '</div>';
+  document.getElementById('timer').innerHTML = h;
+  for (var i=0;i<act.length;i++) updateTimer(act[i].id);
 }
 
-/* ============================================================
-   开台弹窗
-   ============================================================ */
-function openStartSession(roomId) {
-  const room = Store.getRoom(roomId);
-  if (!room) return;
-
-  const modalTitle = document.getElementById('modalTitle');
-  const modalBody = document.getElementById('modalBody');
-
-  modalTitle.textContent = `▶ 开台 — ${room.name}`;
-  modalBody.innerHTML = `
-    <div class="form-group">
-      <label>顾客姓名</label>
-      <input class="form-control" id="customerName" placeholder="例如：张先生" value="">
-    </div>
-    <div class="form-group">
-      <label>联系电话（选填）</label>
-      <input class="form-control" id="customerPhone" placeholder="手机号" value="">
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>押金（选填）</label>
-        <input class="form-control" id="deposit" type="number" min="0" step="5" value="0" placeholder="0">
-      </div>
-      <div class="form-group">
-        <label>费率</label>
-        <input class="form-control" value="${room.hourlyRate} 元/小时" disabled>
-      </div>
-    </div>
-    <div style="margin-top:16px; display:flex; gap:8px; justify-content:flex-end;">
-      <button class="btn btn-outline" onclick="closeModal()">取消</button>
-      <button class="btn btn-primary btn-lg" onclick="confirmStartSession('${roomId}')">▶ 确认开台</button>
-    </div>
-  `;
-
-  openModal();
-}
-
-function confirmStartSession(roomId) {
-  const name = document.getElementById('customerName').value.trim();
-  const phone = document.getElementById('customerPhone').value.trim();
-  const deposit = parseFloat(document.getElementById('deposit').value) || 0;
-
-  const sessionId = Store.startSession(roomId, name || '散客', phone, deposit);
-  if (sessionId) {
-    closeModal();
-    showToast('开台成功！', 'success');
-    navigateTo('tracking');
+function updateTimer(sid) {
+  if(rtimers[sid]) clearInterval(rtimers[sid]);
+  function up() {
+    var s=D().sessions.find(function(x){return x.id===sid});
+    if(!s||s.status!=='a') return;
+    var sec=dbs(s.start,Date.now());
+    var el=document.getElementById('tm-'+sid);
+    if(el) el.textContent=dur(sec);
+    var be=document.getElementById('bt-'+sid);
+    if(be) be.textContent=dur(sec);
   }
+  up();
+  rtimers[sid]=setInterval(up,1000);
 }
 
-/* ============================================================
-   结算弹窗（可编辑 + 实时计算）
-   ============================================================ */
-function endSessionModal(sessionId) {
-  const session = Store.getSession(sessionId);
-  if (!session) return;
-  const room = Store.getRoom(session.roomId);
-  if (!room) return;
-
-  const orders = Store.getOrdersForSession(sessionId);
-  const elapsedSeconds = durationBetween(session.startTime, Date.now());
-  const elapsedMin = Math.ceil(elapsedSeconds / 60);
-  const autoHours = Math.ceil(elapsedMin / 60);
-
-  const modalTitle = document.getElementById('modalTitle');
-  const modalBody = document.getElementById('modalBody');
-
-  modalTitle.textContent = `💰 结账 — ${room.name}`;
-
-  modalBody.innerHTML = `
-    <div class="settlement-section">
-      <div class="settlement-row">
-        <span>顾客</span>
-        <strong>${session.customerName}</strong>
-      </div>
-      <div class="settlement-row">
-        <span>实际上机</span>
-        <strong>${elapsedMin} 分钟（${formatDuration(elapsedSeconds)}）</strong>
-      </div>
-    </div>
-
-    <!-- 可编辑计时设置 -->
-    <div class="card" style="margin-bottom:12px;padding:14px;">
-      <div style="font-size:0.82rem;color:var(--accent);font-weight:600;margin-bottom:10px;">⚙️ 计时设置（可修改）</div>
-      <div class="form-row" style="margin-bottom:8px;">
-        <div class="form-group" style="margin-bottom:0;">
-          <label>结算小时数</label>
-          <input class="form-control settlement-input" id="setHours" type="number" min="0" step="0.5"
-            value="${autoHours}" data-default="${autoHours}"
-            oninput="recalcSettlement()">
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">自动计算: ${autoHours} 小时</div>
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label>费率（元/小时）</label>
-          <input class="form-control settlement-input" id="setRate" type="number" min="0" step="1"
-            value="${room.hourlyRate}" data-default="${room.hourlyRate}"
-            oninput="recalcSettlement()">
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">标准: ${room.hourlyRate} 元/小时</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 折扣设置 -->
-    <div class="card" style="margin-bottom:12px;padding:14px;">
-      <div style="font-size:0.82rem;color:var(--accent);font-weight:600;margin-bottom:10px;">🏷️ 折扣设置</div>
-      <div class="form-row">
-        <div class="form-group" style="margin-bottom:0;">
-          <label>折扣比例 (%)</label>
-          <input class="form-control settlement-input" id="discPct" type="number" min="0" max="100" step="1" value="0"
-            oninput="recalcSettlement()">
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label>固定减免（元）</label>
-          <input class="form-control settlement-input" id="discFix" type="number" min="0" step="1" value="0"
-            oninput="recalcSettlement()">
-        </div>
-      </div>
-    </div>
-
-    <!-- 结算明细 -->
-    <div class="settlement-section" id="settlementBreakdown">
-      <div class="settlement-row">
-        <span>计时费</span>
-        <strong id="lineTimeFee">${formatMoney(autoHours * room.hourlyRate)}</strong>
-      </div>
-      <div class="settlement-row">
-        <span>商品消费</span>
-        <strong>${formatMoney(orders.reduce((s,o) => s + o.price * o.quantity, 0))}</strong>
-      </div>
-      ${session.deposit > 0 ? `
-      <div class="settlement-row">
-        <span>押金</span>
-        <strong>-${formatMoney(session.deposit)}</strong>
-      </div>` : ''}
-      <div class="settlement-row" id="discountLine" style="display:none;">
-        <span>折扣</span>
-        <strong id="lineDiscount" style="color:var(--success);">-¥0.00</strong>
-      </div>
-      <div class="settlement-row total">
-        <span>应收合计</span>
-        <strong id="lineTotal">${formatMoney(autoHours * room.hourlyRate + orders.reduce((s,o) => s + o.price * o.quantity, 0) - session.deposit)}</strong>
-      </div>
-    </div>
-
-    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:14px;">
-      <button class="btn btn-outline" onclick="closeModal()">取消</button>
-      <button class="btn btn-success btn-lg" onclick="confirmEndSession('${sessionId}')">✅ 确认结账</button>
-    </div>
-  `;
-
-  // 保存结算用的原始数据（供 recalcSettlement 读取）
-  document.getElementById("settlementBreakdown")._settlementData = {
-    orderTotal: orders.reduce((s, o) => s + o.price * o.quantity, 0),
-    deposit: session.deposit,
-  };
-
-  openModal();
-  recalcSettlement();
-}
-
-/** 实时重算结算金额 */
-function recalcSettlement() {
-  const hours = parseFloat(document.getElementById('setHours')?.value) || 0;
-  const rate  = parseFloat(document.getElementById('setRate')?.value) || 0;
-  const discPct = parseFloat(document.getElementById('discPct')?.value) || 0;
-  const discFix = parseFloat(document.getElementById('discFix')?.value) || 0;
-
-  const breakdown = document.getElementById('settlementBreakdown');
-  if (!breakdown) return;
-
-  const data = breakdown._settlementData || { orderTotal: 0, deposit: 0 };
-  // 尝试从 modal 的 dataset 读取，否则从 DOM 读取
-  const orderTotal = data.orderTotal;
-  const deposit = data.deposit;
-
-  const timeFee = hours * rate;
-  const subtotal = timeFee + orderTotal;
-  const discountAmount = Math.round(subtotal * discPct / 100 * 100) / 100 + discFix;
-  const total = Math.max(0, subtotal - deposit - discountAmount);
-
-  document.getElementById('lineTimeFee').textContent = formatMoney(timeFee);
-
-  const discLine = document.getElementById('discountLine');
-  const discEl = document.getElementById('lineDiscount');
-  if (discountAmount > 0) {
-    discLine.style.display = 'flex';
-    discEl.textContent = '-' + formatMoney(discountAmount);
-  } else {
-    discLine.style.display = 'none';
+function updateBoardTimer(sid) {
+  function up() {
+    var s=D().sessions.find(function(x){return x.id===sid});
+    if(!s||s.status!=='a') return;
+    var el=document.getElementById('bt-'+sid);
+    if(el) el.textContent=dur(dbs(s.start,Date.now()));
   }
-
-  document.getElementById('lineTotal').textContent = formatMoney(total);
+  up();
+  setInterval(up,1000);
 }
 
-// 将 recalcSettlement 需要的结算数据存到 DOM 上
-function patchSettlementData() {
-  // 在 endSessionModal 中已处理
+// ===== 开台 =====
+function startSess(rid) {
+  var r=D().rooms.find(function(x){return x.id===rid});
+  if(!r) return;
+  showModal('▶ 开台 — '+r.name,
+    '<div class="form one"><div class="form-group"><label>顾客姓名</label><input id="scName" class="s-inp" placeholder="例如：张先生"></div></div>'+
+    '<div class="form"><div class="form-group"><label>押金（选填）</label><input id="scDep" type="number" min="0" step="5" value="0" class="s-inp"></div>'+
+    '<div class="form-group"><label>费率</label><input value="'+r.rate+' 元/小时" disabled class="s-inp" style="opacity:0.6"></div></div>'+
+    '<div class="gap6" style="justify-content:flex-end"><button class="btn b" onclick="closeModal()">取消</button> <button class="btn y" onclick="confStart(\''+rid+'\')">▶ 确认开台</button></div>');
 }
 
-function confirmEndSession(sessionId) {
-  const hours = document.getElementById('setHours')?.value;
-  const rate  = document.getElementById('setRate')?.value;
-  const discPct = document.getElementById('discPct')?.value;
-  const discFix = document.getElementById('discFix')?.value;
-
-  const options = {
-    customHours: hours,
-    customRate: rate,
-    discountPercent: discPct || 0,
-    discountFixed: discFix || 0,
-  };
-
-  const result = Store.endSession(sessionId, Date.now(), options);
-  if (result) {
-    stopTimer(sessionId);
-    closeModal();
-    showToast(`✅ 结账完成！应收 ${formatMoney(result.totalAmount)}`, 'success');
-    navigateTo('tracking');
-  }
+function confStart(rid) {
+  var d=D();
+  var name=document.getElementById('scName').value.trim()||'散客';
+  var dep=parseFloat(document.getElementById('scDep').value)||0;
+  var exist=d.sessions.find(function(s){return s.roomId===rid&&s.status==='a'});
+  if(exist){toast('该包间已有客人','e');return;}
+  var id=newId(d,'s');
+  d.sessions.push({id:id,roomId:rid,customer:name,start:Date.now(),end:null,status:'a',time:0,timeFee:0,deposit:dep,orderTotal:0,total:0,discPct:0,discFix:0,actual:0,autoH:0});
+  save(d);
+  closeModal();
+  toast('开台成功！');
+  navTimer();
 }
 
-/* ============================================================
-   订单管理
-   ============================================================ */
-function renderOrders(el) {
-  const activeSessions = Store.getActiveSessions();
+// ===== 结账 =====
+function endSess(sid) {
+  var d=D();
+  var s=d.sessions.find(function(x){return x.id===sid});
+  if(!s||s.status!=='a') return;
+  var r=d.rooms.find(function(x){return x.id===s.roomId});
+  if(!r) return;
+  var orders=d.orders.filter(function(o){return o.sessionId===sid});
+  var sec=dbs(s.start,Date.now());
+  var min=Math.ceil(sec/60);
+  var autoH=Math.ceil(min/60);
+  var oTotal=orders.reduce(function(s2,o){return s2+o.price*o.qty},0);
+  var timeFee=autoH*r.rate;
+  var sub=timeFee+oTotal;
+  var total=Math.max(0,sub-s.deposit);
+  
+  showModal('💰 结账 — '+r.name,
+    '<div class="settle"><div class="r"><span>顾客</span><strong>'+s.customer+'</strong></div>'+
+    '<div class="r"><span>实际上机</span><strong>'+min+' 分钟</strong></div></div>'+
+    '<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:12px;margin:10px 0">'+
+    '<div style="color:#f5c518;font-size:12px;font-weight:600;margin-bottom:8px">⚙️ 计时设置</div>'+
+    '<div class="form"><div class="form-group"><label>结算小时数</label><input id="eHours" type="number" min="0" step="0.5" value="'+autoH+'" class="s-inp" oninput="recalc(\''+sid+'\')"><div style="font-size:10px;color:#666;margin-top:2px">自动: '+autoH+' 小时</div></div>'+
+    '<div class="form-group"><label>费率（元/小时）</label><input id="eRate" type="number" min="0" step="1" value="'+r.rate+'" class="s-inp" oninput="recalc(\''+sid+'\')"><div style="font-size:10px;color:#666;margin-top:2px">标准: '+r.rate+' 元/时</div></div></div></div>'+
+    '<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:12px;margin:10px 0">'+
+    '<div style="color:#f5c518;font-size:12px;font-weight:600;margin-bottom:8px">🏷️ 折扣</div>'+
+    '<div class="form"><div class="form-group"><label>折扣比例 (%)</label><input id="eDiscPct" type="number" min="0" max="100" step="1" value="0" class="s-inp" oninput="recalc(\''+sid+'\')"></div>'+
+    '<div class="form-group"><label>固定减免（元）</label><input id="eDiscFix" type="number" min="0" step="1" value="0" class="s-inp" oninput="recalc(\''+sid+'\')"></div></div></div>'+
+    '<div class="settle" id="setBreak"><div class="r"><span>计时费</span><strong id="lTimeFee">'+fm(timeFee)+'</strong></div>'+
+    '<div class="r"><span>商品费</span><strong>'+fm(oTotal)+'</strong></div>'+(s.deposit>0?'<div class="r"><span>押金</span><strong>-'+fm(s.deposit)+'</strong></div>':'')+
+    '<div class="r" id="lDiscRow" style="display:none"><span>折扣</span><strong id="lDisc" style="color:#3fb950">-¥0.00</strong></div>'+
+    '<div class="r t"><span>应收</span><strong id="lTotal">'+fm(total)+'</strong></div></div>'+
+    '<div class="gap6" style="justify-content:flex-end"><button class="btn b" onclick="closeModal()">取消</button> <button class="btn g" onclick="confEnd(\''+sid+'\')">✅ 确认结账</button></div>');
+  
+  // 存储结算数据供 recalc 使用
+  var sdata = document.getElementById('setBreak');
+  sdata._oTotal = oTotal;
+  sdata._dep = s.deposit;
+  showOverlay();
+}
 
-  if (activeSessions.length === 0) {
-    el.innerHTML = `
-      <div class="empty-state">
-        <div class="icon">🧾</div>
-        <div class="text">当前没有进行中的计时，无法管理订单</div>
-        <button class="btn btn-primary" onclick="navigateTo('tracking')">去开台</button>
-      </div>
-    `;
+function recalc(sid) {
+  var d=D();
+  var s=d.sessions.find(function(x){return x.id===sid});
+  if(!s) return;
+  var r=d.rooms.find(function(x){return x.id===s.roomId});
+  if(!r) return;
+  var hours=parseFloat(document.getElementById('eHours').value)||0;
+  var rate=parseFloat(document.getElementById('eRate').value)||0;
+  var discPct=parseFloat(document.getElementById('eDiscPct').value)||0;
+  var discFix=parseFloat(document.getElementById('eDiscFix').value)||0;
+  var br=document.getElementById('setBreak');
+  var oTotal=br._oTotal||0;
+  var dep=br._dep||0;
+  var timeFee=hours*rate;
+  var sub=timeFee+oTotal;
+  var discAmt=Math.round(sub*discPct/100*100)/100+discFix;
+  var total=Math.max(0,sub-dep-discAmt);
+  document.getElementById('lTimeFee').textContent=fm(timeFee);
+  var dr=document.getElementById('lDiscRow');
+  var de=document.getElementById('lDisc');
+  if(discAmt>0){dr.style.display='flex';de.textContent='-'+fm(discAmt)}
+  else dr.style.display='none';
+  document.getElementById('lTotal').textContent=fm(total);
+}
+
+function confEnd(sid) {
+  var d=D();
+  var s=d.sessions.find(function(x){return x.id===sid});
+  if(!s||s.status!=='a') return;
+  var hours=document.getElementById('eHours').value;
+  var rate=document.getElementById('eRate').value;
+  var discPct=parseFloat(document.getElementById('eDiscPct').value)||0;
+  var discFix=parseFloat(document.getElementById('eDiscFix').value)||0;
+  var r=d.rooms.find(function(x){return x.id===s.roomId});
+  if(!r) return;
+  var end=Date.now();
+  var min=Math.ceil((end-s.start)/60000);
+  var autoH=Math.ceil(min/60);
+  var hasH=(hours!==undefined&&hours!==null&&hours!=='');
+  var hasR=(rate!==undefined&&rate!==null&&rate!=='');
+  var bH=hasH?Number(hours):autoH;
+  var bR=hasR?Number(rate):r.rate;
+  s.end=end;
+  s.status='c';
+  s.totalTime=bH*60;
+  s.actual=min;
+  s.timeFee=bH*bR;
+  var orders=d.orders.filter(function(o){return o.sessionId===sid});
+  s.orderTotal=orders.reduce(function(s2,o){return s2+o.price*o.qty},0);
+  s.discPct=discPct;
+  s.discFix=discFix;
+  var sub=s.timeFee+s.orderTotal;
+  var discAmt=Math.round(sub*discPct/100*100)/100+discFix;
+  s.total=Math.max(0,Math.round((sub-s.deposit-discAmt)*100)/100);
+  s.customHours=bH;
+  s.customRate=bR;
+  s.autoH=autoH;
+  save(d);
+  if(rtimers[sid]){clearInterval(rtimers[sid]);delete rtimers[sid]}
+  closeModal();
+  toast('✅ 结账完成！应收 '+fm(s.total));
+  navTimer();
+}
+
+// ===== 订单 =====
+var curOrderSid = null;
+function rorder() {
+  var d=D();
+  var act=d.sessions.filter(function(s){return s.status==='a'});
+  if(act.length===0){
+    document.getElementById('order').innerHTML='<div class="emp"><div class="i">🧾</div><div class="t">暂无进行中的计时</div><button class="btn y mt10" onclick="navTimer()">去开台</button></div>';
     return;
   }
-
-  let sessionId = appState.selectedOrderSessionId;
-  if (!sessionId || !activeSessions.find(s => s.id === sessionId)) {
-    sessionId = activeSessions[0].id;
-    appState.selectedOrderSessionId = sessionId;
+  var sid=curOrderSid||act[0].id;
+  curOrderSid=sid;
+  var s=act.find(function(x){return x.id===sid});
+  var r=d.rooms.find(function(x){return x.id===s.roomId});
+  var orders=d.orders.filter(function(o){return o.sessionId===sid});
+  var sec=dbs(s.start,Date.now());
+  var h=Math.ceil(sec/3600);
+  var timeFee=h*r.rate;
+  var oTotal=orders.reduce(function(s2,o){return s2+o.price*o.qty},0);
+  
+  var h2 = '<div style="display:flex;gap:14px;flex-wrap:wrap">';
+  h2 += '<div style="flex:1;min-width:260px">';
+  h2 += '<div class="gap6 mb10">';
+  for(var i=0;i<act.length;i++){
+    var rr=d.rooms.find(function(x){return x.id===act[i].roomId});
+    h2 += '<button class="btn '+(act[i].id===sid?'y':'b')+' s" onclick="swOrder(\''+act[i].id+'\')">'+(rr?rr.name:'?')+' · '+act[i].customer+'</button>';
   }
-
-  const session = Store.getSession(sessionId);
-  const room = Store.getRoom(session.roomId);
-  const orders = Store.getOrdersForSession(sessionId);
-  const elapsedSeconds = durationBetween(session.startTime, Date.now());
-  const hours = Math.ceil(elapsedSeconds / 3600);
-  const timeFee = hours * room.hourlyRate;
-  const orderTotal = orders.reduce((sum, o) => sum + o.price * o.quantity, 0);
-
-  el.innerHTML = `
-    <div style="display:flex; gap:20px; flex-wrap:wrap;">
-      <div style="flex:1; min-width:280px;">
-        <div class="card" style="margin-bottom:12px;">
-          <div class="card-header">
-            <span class="card-title">选择包间</span>
-          </div>
-          <div style="display:flex; gap:4px; flex-wrap:wrap;">
-            ${activeSessions.map(s => {
-              const r = Store.getRoom(s.roomId);
-              const isActive = s.id === sessionId;
-              return `
-                <button class="btn btn-sm ${isActive ? 'btn-primary' : 'btn-outline'}"
-                  onclick="switchOrderSession('${s.id}')">
-                  ${r ? r.name : '未知包间'} · ${s.customerName}
-                </button>
-              `;
-            }).join('')}
-          </div>
-        </div>
-
-        <div class="card" style="margin-bottom:12px;">
-          <div class="card-header">
-            <span class="card-title">⏱️ ${room.name}</span>
-            <span class="tag ${getTypeTagClass(room.type)}">${getTypeLabel(room.type)}</span>
-          </div>
-          <div class="timer-info">
-            <div class="timer-info-item">
-              <div class="label">顾客</div>
-              <div class="value">${session.customerName}</div>
-            </div>
-            <div class="timer-info-item">
-              <div class="label">已用时长</div>
-              <div class="value" id="timer-${session.id}">--:--:--</div>
-            </div>
-            <div class="timer-info-item">
-              <div class="label">计时费</div>
-              <div class="value" id="running-fee-${session.id}">${formatMoney(timeFee)}</div>
-            </div>
-            <div class="timer-info-item">
-              <div class="label">商品费</div>
-              <div class="value">${formatMoney(orderTotal)}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-bottom:12px;">
-          <div class="card-header">
-            <span class="card-title">快速添加</span>
-          </div>
-          <div class="quick-add-grid">
-            <button class="quick-add-btn" onclick="quickAddOrder('${sessionId}', '可乐', 3)">🥤 可乐 ¥3</button>
-            <button class="quick-add-btn" onclick="quickAddOrder('${sessionId}', '雪碧', 3)">🥤 雪碧 ¥3</button>
-            <button class="quick-add-btn" onclick="quickAddOrder('${sessionId}', '矿泉水', 2)">💧 矿泉水 ¥2</button>
-            <button class="quick-add-btn" onclick="quickAddOrder('${sessionId}', '红牛', 8)">🔋 红牛 ¥8</button>
-            <button class="quick-add-btn" onclick="quickAddOrder('${sessionId}', '可乐爆米花', 12)">🍿 爆米花 ¥12</button>
-            <button class="quick-add-btn" onclick="quickAddOrder('${sessionId}', '薯片', 5)">🥔 薯片 ¥5</button>
-            <button class="quick-add-btn" onclick="quickAddOrder('${sessionId}', '充电线', 5)">🔌 充电线 ¥5</button>
-            <button class="quick-add-btn" onclick="quickAddOrder('${sessionId}', '手柄租赁', 10)">🎮 手柄租 ¥10</button>
-          </div>
-          <div style="display:flex; gap:6px;">
-            <input class="form-control" id="customItemName" placeholder="自定义商品名" style="flex:1;">
-            <input class="form-control" id="customItemPrice" type="number" min="0" step="1" placeholder="价格" style="width:80px;">
-            <button class="btn btn-sm btn-primary" onclick="customAddOrder('${sessionId}')">添加</button>
-          </div>
-        </div>
-      </div>
-
-      <div style="flex:1; min-width:280px;">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">🧾 订单清单</span>
-            <button class="btn btn-sm btn-danger" onclick="endSessionModal('${sessionId}')">💰 结账</button>
-          </div>
-          ${orders.length === 0 ? `
-            <div class="empty-state" style="padding:30px 20px;">
-              <div class="icon">📋</div>
-              <div class="text">暂无订单，点击左侧商品添加</div>
-            </div>
-          ` : `
-            <div id="orderList">
-              ${orders.map(o => `
-                <div class="order-item">
-                  <span class="name">${o.itemName}</span>
-                  <span class="qty">×${o.quantity}</span>
-                  <span class="price">${formatMoney(o.price * o.quantity)}</span>
-                  <span class="remove" onclick="removeOrderItem('${o.id}')">✕</span>
-                </div>
-              `).join('')}
-            </div>
-            <div class="order-total">
-              <span>商品合计</span>
-              <span>${formatMoney(orderTotal)}</span>
-            </div>
-          `}
-        </div>
-      </div>
-    </div>
-  `;
-
-  startTimer(sessionId);
-}
-
-function switchOrderSession(sessionId) {
-  appState.selectedOrderSessionId = sessionId;
-  renderOrders(document.getElementById('content'));
-}
-
-function quickAddOrder(sessionId, name, price) {
-  Store.addOrder(sessionId, name, price);
-  showToast(`已添加：${name} ¥${price}`, 'success');
-  renderOrders(document.getElementById('content'));
-}
-
-function customAddOrder(sessionId) {
-  const name = document.getElementById('customItemName').value.trim();
-  const price = parseFloat(document.getElementById('customItemPrice').value);
-  if (!name) { showToast('请输入商品名称', 'error'); return; }
-  if (!price || price <= 0) { showToast('请输入有效价格', 'error'); return; }
-
-  Store.addOrder(sessionId, name, price);
-  document.getElementById('customItemName').value = '';
-  document.getElementById('customItemPrice').value = '';
-  showToast(`已添加：${name} ¥${price}`, 'success');
-  renderOrders(document.getElementById('content'));
-}
-
-function removeOrderItem(orderId) {
-  Store.removeOrder(orderId);
-  showToast('已移除', 'info');
-  renderOrders(document.getElementById('content'));
-}
-
-/* ============================================================
-   历史记录
-   ============================================================ */
-function renderHistory(el) {
-  const selectedDate = appState.currentDate;
-  const dateStr = formatDate(selectedDate);
-  const sessions = Store.getCompletedSessionsByDate(dateStr);
-
-  const dayRevenue = sessions.reduce((sum, s) => sum + s.totalAmount, 0);
-  const daySessions = sessions.length;
-
-  const monthStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).getTime();
-  const monthEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1).getTime();
-  const monthSessions = Store.getAllCompletedSessions().filter(s => {
-    return s.endTime >= monthStart && s.endTime < monthEnd;
-  });
-  const monthRevenue = monthSessions.reduce((sum, s) => sum + s.totalAmount, 0);
-
-  el.innerHTML = `
-    <div class="stats-grid" style="margin-bottom:16px;">
-      <div class="stat-card green">
-        <div class="stat-label">${dateStr} 已完成订单</div>
-        <div class="stat-value success">${daySessions}</div>
-        <div class="stat-sub">单</div>
-      </div>
-      <div class="stat-card orange">
-        <div class="stat-label">${dateStr} 营收</div>
-        <div class="stat-value warning">${formatMoney(dayRevenue)}</div>
-        <div class="stat-sub"></div>
-      </div>
-      <div class="stat-card blue">
-        <div class="stat-label">本月营收</div>
-        <div class="stat-value accent">${formatMoney(monthRevenue)}</div>
-        <div class="stat-sub">${monthSessions.length} 单</div>
-      </div>
-    </div>
-
-    <div class="date-nav">
-      <button class="btn btn-outline btn-sm" onclick="changeHistoryDate(-1)">‹ 前一天</button>
-      <span class="current-date">${dateStr}</span>
-      <button class="btn btn-outline btn-sm" onclick="changeHistoryDate(1)">后一天 ›</button>
-      <button class="btn btn-outline btn-sm" onclick="changeHistoryDate(0)">今天</button>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">📜 结算记录 — ${dateStr}</span>
-      </div>
-      ${sessions.length === 0 ? `
-        <div class="empty-state">
-          <div class="icon">📅</div>
-          <div class="text">该日期暂无结算记录</div>
-        </div>
-      ` : `
-        ${sessions.map(s => {
-          const room = Store.getRoom(s.roomId);
-          const orders = Store.getOrdersForSession(s.id);
-          const orderDetails = orders.length > 0
-            ? orders.map(o => `${o.itemName}×${o.quantity}`).join('、')
-            : '无';
-
-          // 折扣信息
-          const hasDiscount = (s.discountPercent > 0 || s.discountFixed > 0);
-          const discountParts = [];
-          if (s.discountPercent > 0) discountParts.push(`${s.discountPercent}%折扣`);
-          if (s.discountFixed > 0) discountParts.push(`减¥${s.discountFixed}`);
-          const discountText = hasDiscount ? discountParts.join('+') : null;
-
-          // 自定义时间/费率信息
-          const hasCustom = (s.customHours !== null || s.customRate !== null);
-
-          // 计算原价（打折前的应收）
-          const originalAmount = s.timeFee + s.orderTotal - s.deposit;
-
-          return `
-            <div class="history-item">
-              <div class="history-item-header">
-                <span><strong>${room ? room.name : '已删除包间'}</strong></span>
-                <span class="tag ${room ? getTypeTagClass(room.type) : 'tag-general'}">
-                  ${room ? getTypeLabel(room.type) : '通用'}
-                </span>
-              </div>
-              <div class="history-details">
-                <div class="detail-item">顾客：<strong>${s.customerName}</strong></div>
-                <div class="detail-item">上机：<strong>${formatTime(s.startTime)}</strong></div>
-                <div class="detail-item">下机：<strong>${formatTime(s.endTime)}</strong></div>
-                <div class="detail-item">实际时长：<strong>${s.actualTime || s.totalTime}分钟</strong></div>
-                <div class="detail-item">结算时长：<strong>${s.totalTime}分钟 ${hasCustom ? '(手动调整)' : ''}</strong></div>
-                <div class="detail-item">计时费率：<strong>${s.customRate ? s.customRate + '元/时' : (room ? room.hourlyRate + '元/时' : '—')}</strong></div>
-                <div class="detail-item">计时费：<strong>${formatMoney(s.timeFee)}</strong></div>
-                <div class="detail-item">商品：<strong>${orderDetails} (${formatMoney(s.orderTotal)})</strong></div>
-                ${s.deposit > 0 ? `<div class="detail-item">押金：<strong>${formatMoney(s.deposit)}</strong></div>` : ''}
-                ${discountText ? `<div class="detail-item" style="color:var(--success);">折扣：<strong>-${discountText}</strong></div>` : ''}
-                <div class="detail-item" style="color:var(--accent);font-weight:700;font-size:0.92rem;">
-                  实收：<strong>${formatMoney(s.totalAmount)}</strong>
-                  ${originalAmount > s.totalAmount ? `<span style="color:var(--text-muted);font-weight:400;font-size:0.78rem;"> (原价 ${formatMoney(originalAmount)})</span>` : ''}
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('')}
-      `}
-    </div>
-  `;
-}
-
-function changeHistoryDate(delta) {
-  const d = new Date(appState.currentDate);
-  if (delta === 0) {
-    appState.currentDate = new Date();
-  } else {
-    d.setDate(d.getDate() + delta);
-    appState.currentDate = d;
+  h2 += '</div>';
+  h2 += '<div class="room" style="margin-bottom:10px"><div class="h"><span class="n">'+r.name+'</span><span class="tag '+tc(r.type)+'">'+tl(r.type)+'</span></div>';
+  h2 += '<div class="stats" style="grid-template-columns:1fr 1fr;margin-bottom:0">';
+  h2 += '<div class="stat" style="padding:8px;border-left:0;background:transparent"><div class="l">顾客</div><div class="v" style="font-size:14px">'+s.customer+'</div></div>';
+  h2 += '<div class="stat" style="padding:8px;border-left:0;background:transparent"><div class="l">计时费</div><div class="v yl" style="font-size:14px" id="rfee-'+sid+'">'+fm(timeFee)+'</div></div>';
+  h2 += '<div class="stat" style="padding:8px;border-left:0;background:transparent"><div class="l">商品费</div><div class="v" style="font-size:14px">'+fm(oTotal)+'</div></div>';
+  h2 += '<div class="stat" style="padding:8px;border-left:0;background:transparent"><div class="l">已用</div><div class="v" style="font-size:14px" id="o-tm-'+sid+'">--:--:--</div></div>';
+  h2 += '</div></div>';
+  
+  h2 += '<div class="room" style="margin-bottom:10px"><div class="h"><span class="n">快速添加</span></div>';
+  h2 += '<div class="qadd">';
+  var items=[['🥤可乐',3],['🥤雪碧',3],['💧矿泉水',2],['🔋红牛',8],['🍿爆米花',12],['🥔薯片',5],['🔌充电线',5],['🎮手柄租',10]];
+  for(var i=0;i<items.length;i++){
+    h2 += '<button onclick="qAdd(\''+sid+'\',\''+items[i][0].replace(/'/g,"\\'")+'\','+items[i][1]+')">'+items[i][0]+' ¥'+items[i][1]+'</button>';
   }
-  renderHistory(document.getElementById('content'));
+  h2 += '</div>';
+  h2 += '<div class="form one"><div style="display:flex;gap:6px"><input id="cName" placeholder="自定义商品" class="s-inp" style="flex:1"><input id="cPrice" type="number" min="0" step="1" placeholder="价格" class="s-inp" style="width:70px"><button class="btn y s" onclick="cAdd(\''+sid+'\')">添加</button></div></div>';
+  h2 += '</div></div>';
+  
+  h2 += '<div style="flex:1;min-width:260px"><div class="room"><div class="h"><span class="n">🧾 订单清单</span><button class="btn r s" onclick="endSess(\''+sid+'\')">💰 结账</button></div>';
+  if(orders.length===0) h2+='<div class="emp" style="padding:20px"><div class="i">📋</div><div class="t">暂无订单</div></div>';
+  else{
+    for(var i=0;i<orders.length;i++){
+      h2+='<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #222;font-size:13px">';
+      h2+='<span>'+orders[i].name+'</span><span style="color:#888">×'+orders[i].qty+'</span><span style="font-weight:600">'+fm(orders[i].price*orders[i].qty)+'</span>';
+      h2+='<span style="cursor:pointer;color:#f85149;opacity:0.6" onclick="rmOrder(\''+orders[i].id+'\')">✕</span></div>';
+    }
+    h2+='<div style="display:flex;justify-content:space-between;padding:8px 0 0;margin-top:6px;border-top:2px solid #333;font-size:15px;font-weight:700"><span>合计</span><span>'+fm(oTotal)+'</span></div>';
+  }
+  h2+='</div></div></div>';
+  document.getElementById('order').innerHTML = h2;
+  updateTimer(sid);
+  // 更新订单页的计时显示
+  function upFee(){
+    var s2=D().sessions.find(function(x){return x.id===sid});
+    if(!s2||s2.status!=='a') return;
+    var r2=d.rooms.find(function(x){return x.id===s2.roomId});
+    if(!r2) return;
+    var sec2=dbs(s2.start,Date.now());
+    var h2=Math.ceil(sec2/3600);
+    var el=document.getElementById('rfee-'+sid);
+    if(el) el.textContent=fm(h2*r2.rate);
+    var el2=document.getElementById('o-tm-'+sid);
+    if(el2) el2.textContent=dur(sec2);
+  }
+  setInterval(upFee,1000);
 }
 
-/* ========== 包间管理弹窗 ========== */
-function showAddRoomModal() {
-  const modalTitle = document.getElementById('modalTitle');
-  const modalBody = document.getElementById('modalBody');
-
-  modalTitle.textContent = '＋ 添加包间';
-  modalBody.innerHTML = `
-    <div class="form-group">
-      <label>包间名称</label>
-      <input class="form-control" id="roomName" placeholder="例如：PS5 VIP包间">
-    </div>
-    <div class="form-group">
-      <label>类型</label>
-      <select class="form-control" id="roomType">
-        <option value="ps5">PS5</option>
-        <option value="ps4">PS4</option>
-        <option value="switch">Switch</option>
-        <option value="general">通用</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>收费标准（元/小时）</label>
-        <input class="form-control" id="roomRate" type="number" min="0" step="5" value="15">
-      </div>
-      <div class="form-group">
-        <label>押金（元）</label>
-        <input class="form-control" id="roomDeposit" type="number" min="0" step="10" value="0">
-      </div>
-    </div>
-    <div style="margin-top:16px; display:flex; gap:8px; justify-content:flex-end;">
-      <button class="btn btn-outline" onclick="closeModal()">取消</button>
-      <button class="btn btn-primary btn-lg" onclick="confirmAddRoom()">确认添加</button>
-    </div>
-  `;
-
-  openModal();
+function swOrder(sid){curOrderSid=sid;rorder();}
+function qAdd(sid,name,price){
+  var d=D();
+  var id=newId(d,'o');
+  d.orders.push({id:id,sessionId:sid,name:name,price:price,qty:1,time:Date.now()});
+  save(d);
+  toast(name+' ¥'+price);
+  rorder();
+}
+function cAdd(sid){
+  var n=document.getElementById('cName').value.trim();
+  var p=parseFloat(document.getElementById('cPrice').value);
+  if(!n){toast('请输入商品名','e');return}
+  if(!p||p<=0){toast('请输入有效价格','e');return}
+  qAdd(sid,n,p);
+  document.getElementById('cName').value='';
+  document.getElementById('cPrice').value='';
+}
+function rmOrder(oid){
+  var d=D();
+  d.orders=d.orders.filter(function(o){return o.id!==oid});
+  save(d);
+  rorder();
 }
 
-function confirmAddRoom() {
-  const name = document.getElementById('roomName').value.trim();
-  const type = document.getElementById('roomType').value;
-  const rate = parseFloat(document.getElementById('roomRate').value) || 15;
-  const deposit = parseFloat(document.getElementById('roomDeposit').value) || 0;
+// ===== 历史 =====
+var histDate = new Date();
+function rhist() {
+  var d=D();
+  var ds=fd(histDate);
+  var start=new Date(ds+'T00:00:00+08:00').getTime();
+  var end=start+86400000;
+  var sess=d.sessions.filter(function(s){return s.status==='c'&&s.end>=start&&s.end<end});
+  var rev=sess.reduce(function(s2,x){return s2+x.total},0);
+  var mStart=new Date(histDate.getFullYear(),histDate.getMonth(),1).getTime();
+  var mEnd=new Date(histDate.getFullYear(),histDate.getMonth()+1,1).getTime();
+  var mSess=d.sessions.filter(function(s){return s.status==='c'&&s.end>=mStart&&s.end<mEnd});
+  var mRev=mSess.reduce(function(s2,x){return s2+x.total},0);
+  
+  var h='<div class="stats"><div class="stat" style="border-left-color:#3fb950"><div class="l">'+ds+' 订单</div><div class="v gr">'+sess.length+'</div></div>';
+  h+='<div class="stat" style="border-left-color:#d29922"><div class="l">'+ds+' 营收</div><div class="v yl">'+fm(rev)+'</div></div>';
+  h+='<div class="stat" style="border-left-color:#58a6ff"><div class="l">本月营收</div><div class="v yl">'+fm(mRev)+'</div></div></div>';
+  
+  h+='<div class="gap6 mb10"><button class="btn b s" onclick="chDate(-1)">‹ 前一天</button><span style="font-size:14px;font-weight:600;padding:4px 8px">'+ds+'</span><button class="btn b s" onclick="chDate(1)">后一天 ›</button><button class="btn b s" onclick="chDate(0)">今天</button></div>';
+  
+  if(sess.length===0) h+='<div class="emp"><div class="i">📅</div><div class="t">暂无记录</div></div>';
+  else{
+    for(var i=0;i<sess.length;i++){
+      var s=sess[i];
+      var r=d.rooms.find(function(x){return x.id===s.roomId});
+      var orders=d.orders.filter(function(o){return o.sessionId===s.id});
+      var oD=orders.length>0?orders.map(function(o){return o.name+'×'+o.qty}).join('、'):'无';
+      var hasDisc=s.discPct>0||s.discFix>0;
+      var discT='';
+      if(s.discPct>0) discT+=s.discPct+'%';
+      if(s.discFix>0) discT+=(discT?'+':'')+'减¥'+s.discFix;
+      
+      h+='<div class="hist"><div class="h"><strong>'+(r?r.name:'已删除')+'</strong><span class="tag '+(r?tc(r.type):'tag g')+'">'+(r?tl(r.type):'')+'</span></div>';
+      h+='<div class="d"><span>顾客: <strong>'+s.customer+'</strong></span>';
+      h+='<span>上机: <strong>'+ft(s.start)+'</strong></span>';
+      h+='<span>下机: <strong>'+ft(s.end)+'</strong></span>';
+      h+='<span>时长: <strong>'+(s.actual||s.totalTime)+'分钟</strong></span>';
+      h+='<span>计时: <strong>'+fm(s.timeFee)+'</strong></span>';
+      h+='<span>商品: <strong>'+oD+' ('+fm(s.orderTotal)+')</strong></span>';
+      if(hasDisc) h+='<span style="color:#3fb950">折扣: <strong>-'+discT+'</strong></span>';
+      h+='<span style="color:#f5c518;font-weight:700">实收: <strong>'+fm(s.total)+'</strong></span></div></div>';
+    }
+  }
+  document.getElementById('hist').innerHTML = h;
+}
 
-  if (!name) { showToast('请输入包间名称', 'error'); return; }
+function chDate(delta){
+  if(delta===0) histDate=new Date();
+  else{var d=new Date(histDate);d.setDate(d.getDate()+delta);histDate=d}
+  rhist();
+}
 
-  Store.addRoom(name, type, rate, deposit);
+// ===== 包间管理弹窗 =====
+function addRoom(){
+  showModal('＋ 添加包间',
+    '<div class="form one"><div class="form-group"><label>包间名称</label><input id="rName" class="s-inp" placeholder="例如：PS5 VIP包间"></div></div>'+
+    '<div class="form one"><div class="form-group"><label>类型</label><select id="rType" class="s-inp"><option value="ps5">PS5</option><option value="ps4">PS4</option><option value="switch">Switch</option></select></div></div>'+
+    '<div class="form"><div class="form-group"><label>费率（元/小时）</label><input id="rRate" type="number" min="0" step="5" value="15" class="s-inp"></div>'+
+    '<div class="form-group"><label>押金（元）</label><input id="rDep" type="number" min="0" step="10" value="0" class="s-inp"></div></div>'+
+    '<div class="gap6" style="justify-content:flex-end"><button class="btn b" onclick="closeModal()">取消</button> <button class="btn y" onclick="confAddRoom()">确认添加</button></div>');
+}
+
+function confAddRoom(){
+  var n=document.getElementById('rName').value.trim();
+  var t=document.getElementById('rType').value;
+  var r=parseFloat(document.getElementById('rRate').value)||15;
+  var d=parseFloat(document.getElementById('rDep').value)||0;
+  if(!n){toast('请输入名称','e');return}
+  var data=D();
+  data.rooms.push({id:newId(data,'r'),name:n,type:t,rate:r,deposit:d});
+  save(data);
   closeModal();
-  showToast('包间已添加', 'success');
-  navigateTo('rooms');
+  toast('包间已添加');
+  rrooms();
 }
 
-function showEditRoomModal(roomId) {
-  const room = Store.getRoom(roomId);
-  if (!room) return;
-
-  const modalTitle = document.getElementById('modalTitle');
-  const modalBody = document.getElementById('modalBody');
-
-  modalTitle.textContent = `编辑 — ${room.name}`;
-  modalBody.innerHTML = `
-    <div class="form-group">
-      <label>包间名称</label>
-      <input class="form-control" id="roomName" value="${room.name}">
-    </div>
-    <div class="form-group">
-      <label>类型</label>
-      <select class="form-control" id="roomType">
-        <option value="ps5" ${room.type === 'ps5' ? 'selected' : ''}>PS5</option>
-        <option value="ps4" ${room.type === 'ps4' ? 'selected' : ''}>PS4</option>
-        <option value="switch" ${room.type === 'switch' ? 'selected' : ''}>Switch</option>
-        <option value="general" ${room.type === 'general' ? 'selected' : ''}>通用</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>收费标准（元/小时）</label>
-        <input class="form-control" id="roomRate" type="number" min="0" step="5" value="${room.hourlyRate}">
-      </div>
-      <div class="form-group">
-        <label>押金（元）</label>
-        <input class="form-control" id="roomDeposit" type="number" min="0" step="10" value="${room.deposit || 0}">
-      </div>
-    </div>
-    <div style="margin-top:16px; display:flex; gap:8px; justify-content:flex-end;">
-      <button class="btn btn-outline" onclick="closeModal()">取消</button>
-      <button class="btn btn-primary btn-lg" onclick="confirmEditRoom('${roomId}')">保存修改</button>
-    </div>
-  `;
-
-  openModal();
+function editRoom(rid){
+  var r=D().rooms.find(function(x){return x.id===rid});
+  if(!r) return;
+  showModal('编辑 — '+r.name,
+    '<div class="form one"><div class="form-group"><label>名称</label><input id="rName" class="s-inp" value="'+r.name+'"></div></div>'+
+    '<div class="form one"><div class="form-group"><label>类型</label><select id="rType" class="s-inp"><option value="ps5"'+(r.type==='ps5'?' selected':'')+'>PS5</option><option value="ps4"'+(r.type==='ps4'?' selected':'')+'>PS4</option><option value="switch"'+(r.type==='switch'?' selected':'')+'>Switch</option></select></div></div>'+
+    '<div class="form"><div class="form-group"><label>费率</label><input id="rRate" type="number" min="0" step="5" value="'+r.rate+'" class="s-inp"></div>'+
+    '<div class="form-group"><label>押金</label><input id="rDep" type="number" min="0" step="10" value="'+(r.deposit||0)+'" class="s-inp"></div></div>'+
+    '<div class="gap6" style="justify-content:flex-end"><button class="btn b" onclick="closeModal()">取消</button> <button class="btn y" onclick="confEditRoom(\''+rid+'\')">保存</button></div>');
 }
 
-function confirmEditRoom(roomId) {
-  const name = document.getElementById('roomName').value.trim();
-  const type = document.getElementById('roomType').value;
-  const rate = parseFloat(document.getElementById('roomRate').value) || 15;
-  const deposit = parseFloat(document.getElementById('roomDeposit').value) || 0;
-
-  if (!name) { showToast('请输入包间名称', 'error'); return; }
-
-  Store.updateRoom(roomId, { name, type, hourlyRate: rate, deposit });
+function confEditRoom(rid){
+  var n=document.getElementById('rName').value.trim();
+  var t=document.getElementById('rType').value;
+  var r2=parseFloat(document.getElementById('rRate').value)||15;
+  var d=parseFloat(document.getElementById('rDep').value)||0;
+  if(!n){toast('请输入名称','e');return}
+  var data=D();
+  var room=data.rooms.find(function(x){return x.id===rid});
+  if(room){room.name=n;room.type=t;room.rate=r2;room.deposit=d}
+  save(data);
   closeModal();
-  showToast('包间信息已更新', 'success');
-  navigateTo('rooms');
+  toast('已更新');
+  rrooms();
 }
 
-function deleteRoomConfirm(roomId) {
-  const room = Store.getRoom(roomId);
-  if (!room) return;
-  if (!confirm(`确定要删除「${room.name}」吗？`)) return;
-
-  if (Store.deleteRoom(roomId)) {
-    showToast('包间已删除', 'info');
-    navigateTo('rooms');
-  }
+function delRoom(rid){
+  if(!confirm('确定删除？')) return;
+  var d=D();
+  var act=d.sessions.find(function(s){return s.roomId===rid&&s.status==='a'});
+  if(act){toast('该包间有客人，无法删除','e');return}
+  d.rooms=d.rooms.filter(function(r){return r.id!==rid});
+  save(d);
+  toast('已删除');
+  rrooms();
 }
 
-/* ========== 模态框控制 ========== */
-function openModal() {
-  document.getElementById('modalOverlay').classList.add('open');
+// ===== 模态框 =====
+function showModal(title, body) {
+  document.getElementById('mtitle').textContent = title;
+  document.getElementById('mbody').innerHTML = body;
+  showOverlay();
+}
+
+function showOverlay() {
+  document.getElementById('overlay').classList.add('o');
 }
 
 function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
+  document.getElementById('overlay').classList.remove('o');
 }
 
-document.getElementById('modalOverlay').addEventListener('click', (e) => {
+document.getElementById('overlay').addEventListener('click', function(e) {
   if (e.target === e.currentTarget) closeModal();
 });
 
+// ===== 导出/导入 =====
+function exp() {
+  var d=D();
+  var blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='暗峰娱乐数据_'+fd(Date.now())+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('已导出');
+}
+function imp(e){
+  var file=e.target.files[0];
+  if(!file)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    try{
+      var d=JSON.parse(ev.target.result);
+      if(!d.rooms||!d.sessions||!d.orders){toast('格式错误','e');return}
+      save(d);
+      toast('已导入');
+      location.reload();
+    }catch(err){toast('导入失败','e')}
+  };
+  r.readAsText(file);
+}
+
+// ===== 快捷导航 =====
+function navTimer(){navTo('timer')}
+function navOrder(sid){curOrderSid=sid;navTo('order')}
+function navTo(p){
+  document.querySelectorAll('.nav a').forEach(function(x){x.classList.remove('act')});
+  var el=document.querySelector('[data-page="'+p+'"]');
+  if(el)el.classList.add('act');
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('act')});
+  document.getElementById(p).classList.add('act');
+  render(p);
+}
+
+// ===== 初始化 =====
+// 从第一个版本可正常打开
 </script>
 </body>
 </html>
