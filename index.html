@@ -113,9 +113,10 @@ h2{font-size:16px;margin-bottom:10px}
 var KEY = 'af_data';
 // ===== 云端同步配置（可选）=====
 // 注册 Supabase (supabase.com) 免费账号，创建一个项目，复制以下两个值
-var CLOUD_URL = '';  // 例如: https://xxx.supabase.co
-var CLOUD_KEY = '';  // 项目 anon key
-var CLOUD_TABLE = 'store_data';
+var LC_APP_ID = '';   // LeanCloud App ID（在设置-应用 Keys 里找）
+var LC_APP_KEY = '';  // LeanCloud App Key（Rest API Key）
+var LC_CLASS = 'StoreData';
+var LC_OBJ_ID = '';   // 第一条数据创建后，控制台里复制 objectId 过来
 var LAST_SYNC = 0;    // 上次同步时间戳
 var DEF = {
   rooms: [
@@ -166,7 +167,7 @@ function load() {
     d._roomsUpgraded = true;
   }
   // 尝试从云端同步（不阻塞，同步后只是更新本地数据）
-  if (CLOUD_URL && CLOUD_KEY) {
+  if (LC_APP_ID && LC_APP_KEY && LC_OBJ_ID) {
     syncFromCloud();
   }
   return d;
@@ -174,16 +175,17 @@ function load() {
 function save(d) {
   try { localStorage.setItem(KEY, JSON.stringify(d)); } catch(e) { alert('保存失败'); }
   // 自动同步到云端
-  if (CLOUD_URL && CLOUD_KEY) syncToCloud(d);
+  if (LC_APP_ID && LC_APP_KEY && LC_OBJ_ID) syncToCloud(d);
 }
 
 // ===== 云端同步 =====
 function syncToCloud(data) {
-  if (!CLOUD_URL || !CLOUD_KEY) return;
-  var body = JSON.stringify({ data: data, updated_at: new Date().toISOString() });
-  fetch(CLOUD_URL + '/rest/v1/' + CLOUD_TABLE + '?id=eq.1', {
+  if (!LC_APP_ID || !LC_APP_KEY || !LC_OBJ_ID) return;
+  var url = 'https://' + LC_APP_ID + '.api.lncld.net/1.1/classes/' + LC_CLASS + '/' + LC_OBJ_ID;
+  var body = JSON.stringify({ data: data });
+  fetch(url, {
     method: 'PUT',
-    headers: { 'apikey': CLOUD_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    headers: { 'X-LC-Id': LC_APP_ID, 'X-LC-Key': LC_APP_KEY, 'Content-Type': 'application/json' },
     body: body
   }).then(function(r) {
     if (r.ok) { LAST_SYNC = Date.now(); updateSyncStatus(); }
@@ -192,18 +194,19 @@ function syncToCloud(data) {
 }
 
 function syncFromCloud() {
-  if (!CLOUD_URL || !CLOUD_KEY) return Promise.resolve(null);
-  return fetch(CLOUD_URL + '/rest/v1/' + CLOUD_TABLE + '?id=eq.1&select=data', {
-    headers: { 'apikey': CLOUD_KEY }
+  if (!LC_APP_ID || !LC_APP_KEY || !LC_OBJ_ID) return Promise.resolve(null);
+  var url = 'https://' + LC_APP_ID + '.api.lncld.net/1.1/classes/' + LC_CLASS + '/' + LC_OBJ_ID;
+  return fetch(url, {
+    headers: { 'X-LC-Id': LC_APP_ID, 'X-LC-Key': LC_APP_KEY }
   }).then(function(r) {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
-  }).then(function(arr) {
-    if (arr && arr.length > 0 && arr[0].data) {
-      localStorage.setItem(KEY, JSON.stringify(arr[0].data));
+  }).then(function(obj) {
+    if (obj && obj.data) {
+      localStorage.setItem(KEY, JSON.stringify(obj.data));
       LAST_SYNC = Date.now();
       updateSyncStatus();
-      return arr[0].data;
+      return obj.data;
     }
     return null;
   }).catch(function(e) {
@@ -219,7 +222,7 @@ function updateSyncStatus() {
     var d = new Date(LAST_SYNC);
     el.textContent = '☁️ 已同步 ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
     el.style.color = '#3fb950';
-  } else if (CLOUD_URL && CLOUD_KEY) {
+  } else if (LC_APP_ID && LC_APP_KEY && LC_OBJ_ID) {
     el.textContent = '☁️ 待同步';
     el.style.color = '#d29922';
   } else {
