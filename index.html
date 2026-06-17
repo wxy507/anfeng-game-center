@@ -112,15 +112,17 @@ h2{font-size:16px;margin-bottom:10px}
 var KEY = 'af_data';
 var DEF = {
   rooms: [
-    {id:'r1',name:'PS5 1号厅',type:'ps5',rate:15,deposit:0},
-    {id:'r2',name:'PS5 2号厅',type:'ps5',rate:15,deposit:0},
-    {id:'r3',name:'PS4 1号厅',type:'ps4',rate:10,deposit:0},
-    {id:'r4',name:'PS4 2号厅',type:'ps4',rate:10,deposit:0},
-    {id:'r5',name:'Switch厅',type:'switch',rate:12,deposit:0}
+    {id:'r1',name:'PS5大厅1',type:'ps5',rate:40,deposit:0},
+    {id:'r2',name:'PS5大厅2',type:'ps5',rate:40,deposit:0},
+    {id:'r3',name:'PS4大厅1',type:'ps4',rate:30,deposit:0},
+    {id:'r4',name:'PS4大厅2',type:'ps4',rate:30,deposit:0},
+    {id:'r5',name:'小包',type:'general',rate:60,deposit:0},
+    {id:'r6',name:'中包',type:'general',rate:70,deposit:0},
+    {id:'r7',name:'大包',type:'general',rate:80,deposit:0}
   ],
   sessions: [],
   orders: [],
-  seq: {r:6,s:1,o:1}
+  seq: {r:8,s:1,o:1}
 };
 
 function load() {
