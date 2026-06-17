@@ -120,7 +120,7 @@ var DEF = {
   ],
   sessions: [],
   orders: [],
-  seq: {rooms:6,s:1,o:1}
+  seq: {r:6,s:1,o:1}
 };
 
 function load() {
@@ -129,6 +129,27 @@ function load() {
     var r = localStorage.getItem(KEY);
     if (r) { d = JSON.parse(r); for (var k in DEF) { if (!(k in d)) d[k] = DEF[k]; } }
   } catch(e) {}
+  // 迁移旧数据: 如果旧版用了 rooms 而不是 r，转换
+  if (d.seq && typeof d.seq.rooms === "number" && typeof d.seq.r !== "number") {
+    d.seq.r = d.seq.rooms;
+  }
+  // 修复可能存在的 rNaN 房间 ID
+  if (d.rooms) {
+    var maxId = 0;
+    for (var i = 0; i < d.rooms.length; i++) {
+      var m = d.rooms[i].id.match(/^r(\d+)$/);
+      if (m) { var n = parseInt(m[1]); if (n > maxId) maxId = n; }
+    }
+    // 给 rNaN 房间分配新 ID
+    var fixCount = 0;
+    for (var j = 0; j < d.rooms.length; j++) {
+      if (d.rooms[j].id === 'rNaN' || d.rooms[j].id.indexOf('rNaN') >= 0) {
+        fixCount++;
+        d.rooms[j].id = 'r' + (maxId + fixCount);
+      }
+    }
+    d.seq.r = Math.max(d.seq.r || 0, maxId + fixCount + 1);
+  }
   return d;
 }
 function save(d) {
