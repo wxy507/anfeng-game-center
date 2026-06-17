@@ -110,7 +110,7 @@ h2{font-size:16px;margin-bottom:10px}
 <script>
 // ===== 数据层 =====
 var KEY = 'af_data';
-var DEF = {ver:2,
+var DEF = {
   rooms: [
     {id:'r1',name:'PS5大厅1',type:'ps5',rate:40,deposit:0},
     {id:'r2',name:'PS5大厅2',type:'ps5',rate:40,deposit:0},
@@ -152,11 +152,11 @@ function load() {
     }
     d.seq.r = Math.max(d.seq.r || 0, maxId + fixCount + 1);
   }
-  // 版本升级: 如果数据版本过旧，强制使用默认房间
-  if (!d.ver || d.ver < 2) {
+  // 版本升级: 强制使用默认房间替换旧数据
+  if (!d._roomsUpgraded) {
     d.rooms = JSON.parse(JSON.stringify(DEF.rooms));
     d.seq.r = DEF.seq.r;
-    d.ver = 2;
+    d._roomsUpgraded = true;
   }
   return d;
 }
