@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>暗峰娱乐 · 包间管理系统</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h1 class="logo">🎮 暗峰娱乐</h1>
+        <p class="subtitle">包间管理系统</p>
+      </div>
+      <nav class="nav">
+        <a class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>仪表盘</span>
+        </a>
+        <a class="nav-item" data-page="statusboard">
+          <span class="nav-icon">📺</span>
+          <span>状态板</span>
+        </a>
+        <a class="nav-item" data-page="rooms">
+          <span class="nav-icon">🛋️</span>
+          <span>包间管理</span>
+        </a>
+        <a class="nav-item" data-page="tracking">
+          <span class="nav-icon">⏱️</span>
+          <span>计时管理</span>
+        </a>
+        <a class="nav-item" data-page="orders">
+          <span class="nav-icon">🧾</span>
+          <span>订单管理</span>
+        </a>
+        <a class="nav-item" data-page="history">
+          <span class="nav-icon">📜</span>
+          <span>历史记录</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="data-actions">
+          <button class="btn btn-sm btn-outline" onclick="exportData()">📤 导出数据</button>
+          <button class="btn btn-sm btn-outline" onclick="document.getElementById('importFile').click()">📥 导入数据</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="resetAllData()">🗑️ 重置</button>
+      </div>
+    </aside>
+
+    <!-- 主要内容 -->
+    <main class="main" id="main">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <h2 class="page-title" id="pageTitle">仪表盘</h2>
+        <div class="topbar-right">
+          <span class="current-time" id="currentTime"></span>
+        </div>
+      </header>
+      <div class="content" id="content">
+        <!-- 由 JS 动态渲染 -->
+      </div>
+    </main>
+  </div>
+
+  <!-- 模态框 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">标题</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- 由 JS 动态渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
