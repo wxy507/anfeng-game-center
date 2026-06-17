@@ -88,6 +88,7 @@ h2{font-size:16px;margin-bottom:10px}
 </div>
 <div class="gap6 mb10">
   <button class="btn b s" onclick="exp()">📤 导出</button>
+  <span id="syncStatus" style="font-size:11px;padding:3px 0">☁️ -</span>
   <button class="btn b s" onclick="document.getElementById('imp').click()">📥 导入</button>
   <input type="file" id="imp" accept=".json" style="display:none" onchange="imp(event)">
   <button class="btn r s" onclick="if(confirm('确定重置？')){localStorage.clear();location.reload()}">🗑️ 重置</button>
@@ -110,6 +111,12 @@ h2{font-size:16px;margin-bottom:10px}
 <script>
 // ===== 数据层 =====
 var KEY = 'af_data';
+// ===== 云端同步配置（可选）=====
+// 注册 Supabase (supabase.com) 免费账号，创建一个项目，复制以下两个值
+var CLOUD_URL = '';  // 例如: https://xxx.supabase.co
+var CLOUD_KEY = '';  // 项目 anon key
+var CLOUD_TABLE = 'store_data';
+var LAST_SYNC = 0;    // 上次同步时间戳
 var DEF = {
   rooms: [
     {id:'r1',name:'PS5大厅1',type:'ps5',rate:40,deposit:0},
@@ -158,10 +165,67 @@ function load() {
     d.seq.r = DEF.seq.r;
     d._roomsUpgraded = true;
   }
+  // 尝试从云端同步（不阻塞，同步后只是更新本地数据）
+  if (CLOUD_URL && CLOUD_KEY) {
+    syncFromCloud();
+  }
   return d;
 }
 function save(d) {
   try { localStorage.setItem(KEY, JSON.stringify(d)); } catch(e) { alert('保存失败'); }
+  // 自动同步到云端
+  if (CLOUD_URL && CLOUD_KEY) syncToCloud(d);
+}
+
+// ===== 云端同步 =====
+function syncToCloud(data) {
+  if (!CLOUD_URL || !CLOUD_KEY) return;
+  var body = JSON.stringify({ data: data, updated_at: new Date().toISOString() });
+  fetch(CLOUD_URL + '/rest/v1/' + CLOUD_TABLE + '?id=eq.1', {
+    method: 'PUT',
+    headers: { 'apikey': CLOUD_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: body
+  }).then(function(r) {
+    if (r.ok) { LAST_SYNC = Date.now(); updateSyncStatus(); }
+    else console.warn('云端同步失败:', r.status);
+  }).catch(function(e) { console.warn('云端同步异常:', e); });
+}
+
+function syncFromCloud() {
+  if (!CLOUD_URL || !CLOUD_KEY) return Promise.resolve(null);
+  return fetch(CLOUD_URL + '/rest/v1/' + CLOUD_TABLE + '?id=eq.1&select=data', {
+    headers: { 'apikey': CLOUD_KEY }
+  }).then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function(arr) {
+    if (arr && arr.length > 0 && arr[0].data) {
+      localStorage.setItem(KEY, JSON.stringify(arr[0].data));
+      LAST_SYNC = Date.now();
+      updateSyncStatus();
+      return arr[0].data;
+    }
+    return null;
+  }).catch(function(e) {
+    console.warn('云端加载失败，使用本地数据:', e);
+    return null;
+  });
+}
+
+function updateSyncStatus() {
+  var el = document.getElementById('syncStatus');
+  if (!el) return;
+  if (LAST_SYNC > 0) {
+    var d = new Date(LAST_SYNC);
+    el.textContent = '☁️ 已同步 ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
+    el.style.color = '#3fb950';
+  } else if (CLOUD_URL && CLOUD_KEY) {
+    el.textContent = '☁️ 待同步';
+    el.style.color = '#d29922';
+  } else {
+    el.textContent = '☁️ 未配置';
+    el.style.color = '#555';
+  }
 }
 function D() { return load(); }
 
