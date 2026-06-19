@@ -88,7 +88,6 @@ h2{font-size:16px;margin-bottom:10px}
 </div>
 <div class="gap6 mb10">
   <button class="btn b s" onclick="exp()">📤 导出</button>
-  <span id="syncStatus" style="font-size:11px;padding:3px 0">☁️ -</span>
   <button class="btn b s" onclick="document.getElementById('imp').click()">📥 导入</button>
   <input type="file" id="imp" accept=".json" style="display:none" onchange="imp(event)">
   <button class="btn r s" onclick="if(confirm('确定重置？')){localStorage.clear();location.reload()}">🗑️ 重置</button>
@@ -111,13 +110,6 @@ h2{font-size:16px;margin-bottom:10px}
 <script>
 // ===== 数据层 =====
 var KEY = 'af_data';
-// ===== 云端同步配置（可选）=====
-// LeanCloud 配置（免费，国内速度快）
-var LC_APP_ID = '';   // LeanCloud App ID（在设置-应用 Keys 里找）
-var LC_APP_KEY = '';  // LeanCloud App Key（Rest API Key）
-var LC_CLASS = 'StoreData';
-var LC_OBJ_ID = '';   // 第一条数据创建后，控制台里复制 objectId 过来
-var LAST_SYNC = 0;    // 上次同步时间戳
 var DEF = {
   rooms: [
     {id:'r1',name:'PS5大厅1',type:'ps5',rate:40,deposit:0},
@@ -166,69 +158,10 @@ function load() {
     d.seq.r = DEF.seq.r;
     d._roomsUpgraded = true;
   }
-  // 尝试从云端同步（不阻塞，同步后只是更新本地数据）
-  if (LC_APP_ID && LC_APP_KEY && LC_OBJ_ID) {
-    syncFromCloud();
-  }
   return d;
 }
 function save(d) {
   try { localStorage.setItem(KEY, JSON.stringify(d)); } catch(e) { alert('保存失败'); }
-  // 自动同步到云端
-  if (LC_APP_ID && LC_APP_KEY && LC_OBJ_ID) syncToCloud(d);
-}
-
-// ===== 云端同步 =====
-function syncToCloud(data) {
-  if (!LC_APP_ID || !LC_APP_KEY || !LC_OBJ_ID) return;
-  var url = 'https://' + LC_APP_ID + '.api.lncld.net/1.1/classes/' + LC_CLASS + '/' + LC_OBJ_ID;
-  var body = JSON.stringify({ data: data });
-  fetch(url, {
-    method: 'PUT',
-    headers: { 'X-LC-Id': LC_APP_ID, 'X-LC-Key': LC_APP_KEY, 'Content-Type': 'application/json' },
-    body: body
-  }).then(function(r) {
-    if (r.ok) { LAST_SYNC = Date.now(); updateSyncStatus(); }
-    else console.warn('云端同步失败:', r.status);
-  }).catch(function(e) { console.warn('云端同步异常:', e); });
-}
-
-function syncFromCloud() {
-  if (!LC_APP_ID || !LC_APP_KEY || !LC_OBJ_ID) return Promise.resolve(null);
-  var url = 'https://' + LC_APP_ID + '.api.lncld.net/1.1/classes/' + LC_CLASS + '/' + LC_OBJ_ID;
-  return fetch(url, {
-    headers: { 'X-LC-Id': LC_APP_ID, 'X-LC-Key': LC_APP_KEY }
-  }).then(function(r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }).then(function(obj) {
-    if (obj && obj.data) {
-      localStorage.setItem(KEY, JSON.stringify(obj.data));
-      LAST_SYNC = Date.now();
-      updateSyncStatus();
-      return obj.data;
-    }
-    return null;
-  }).catch(function(e) {
-    console.warn('云端加载失败，使用本地数据:', e);
-    return null;
-  });
-}
-
-function updateSyncStatus() {
-  var el = document.getElementById('syncStatus');
-  if (!el) return;
-  if (LAST_SYNC > 0) {
-    var d = new Date(LAST_SYNC);
-    el.textContent = '☁️ 已同步 ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
-    el.style.color = '#3fb950';
-  } else if (LC_APP_ID && LC_APP_KEY && LC_OBJ_ID) {
-    el.textContent = '☁️ 待同步';
-    el.style.color = '#d29922';
-  } else {
-    el.textContent = '☁️ 未配置';
-    el.style.color = '#555';
-  }
 }
 function D() { return load(); }
 
@@ -435,7 +368,7 @@ function confStart(rid) {
   var exist=d.sessions.find(function(s){return s.roomId===rid&&s.status==='a'});
   if(exist){toast('该包间已有客人','e');return;}
   var id=newId(d,'s');
-  d.sessions.push({id:id,roomId:rid,customer:name,start:Date.now(),end:null,status:'a',time:0,timeFee:0,deposit:dep,orderTotal:0,total:0,discPct:0,discFix:0,actual:0,autoH:0,couponUsed:false,couponType:'',couponAmt:0,couponNotes:''});
+  d.sessions.push({id:id,roomId:rid,customer:name,start:Date.now(),end:null,status:'a',time:0,timeFee:0,deposit:dep,orderTotal:0,total:0,discPct:0,discFix:0,actual:0,autoH:0,couponUsed:false,couponType:'',couponAmt:0});
   save(d);
   closeModal();
   toast('开台成功！');
@@ -475,8 +408,7 @@ function endSess(sid) {
     '<label style="display:flex;align-items:center;gap:6px"><input id="eCouponCheck" type="checkbox" onchange="toggleCoupon(\'"+sid+"\')"> 使用了团购券</label></div></div>'+
     '<div id="couponFields" style="display:none">'+
     '<div class="form"><div class="form-group"><label>券类型</label><select id="eCouponType" class="s-inp"><option value="美团">美团</option><option value="大众点评">大众点评</option><option value="抖音">抖音</option></select></div>'+
-    '<div class="form-group"><label>券金额（元）</label><input id="eCouponAmt" type="number" min="0" step="1" value="0" class="s-inp" oninput="recalc(\'"+sid+"\')"></div></div>'+
-    '<div class="form one"><div class="form-group"><label>备注（选填）</label><input id="eCouponNotes" class="s-inp" placeholder="例如：抖音团购125元代100"></div></div></div></div>'+
+    '<div class="form-group"><label>券金额（元）</label><input id="eCouponAmt" type="number" min="0" step="1" value="0" class="s-inp" oninput="recalc(\'"+sid+"\')"></div></div></div></div>'+
     '<div class="settle" id="setBreak"><div class="r"><span>计时费</span><strong id="lTimeFee">'+fm(timeFee)+'</strong></div>'+
     '<div class="r"><span>商品费</span><strong>'+fm(oTotal)+'</strong></div>'+(s.deposit>0?'<div class="r"><span>押金</span><strong>-'+fm(s.deposit)+'</strong></div>':'')+
     '<div class="r" id="lDiscRow" style="display:none"><span>折扣</span><strong id="lDisc" style="color:#3fb950">-¥0.00</strong></div>'+
@@ -552,7 +484,6 @@ function confEnd(sid) {
   s.couponUsed=useCoupon;
   s.couponType=useCoupon?(document.getElementById('eCouponType').value):'';
   s.couponAmt=useCoupon?(parseFloat(document.getElementById('eCouponAmt').value)||0):0;
-  s.couponNotes=useCoupon?(document.getElementById('eCouponNotes').value.trim()):'';
   s.total=useCoupon?0:Math.max(0,Math.round((sub-s.deposit-discAmt)*100)/100);
   s.customHours=bH;
   s.customRate=bR;
@@ -703,7 +634,7 @@ function rhist() {
       h+='<span>计时: <strong>'+fm(s.timeFee)+'</strong></span>';
       h+='<span>商品: <strong>'+oD+' ('+fm(s.orderTotal)+')</strong></span>';
       if(hasDisc) h+='<span style="color:#3fb950">折扣: <strong>-'+discT+'</strong></span>';
-      if(s.couponUsed) h+='<span style="color:#58a6ff">团购券: <strong>'+s.couponType+' ¥'+s.couponAmt+(s.couponNotes?' ('+s.couponNotes+')':'')+'</strong></span>';
+      if(s.couponUsed) h+='<span style="color:#58a6ff">团购券: <strong>'+s.couponType+' ¥'+s.couponAmt+'</strong></span>';
       h+='<span style="color:#f5c518;font-weight:700">实收: <strong>'+fm(s.total)+'</strong></span></div></div>';
     }
   }
